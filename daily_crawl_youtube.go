@@ -16,8 +16,8 @@ import (
 )
 
 var (
-	query = flag.String("query", "花澤香菜", "search term")
 	maxResults = flag.Int64("max-results", 50, "Max Youtube results")
+	query_words = [...]string{"花澤香菜", "花澤病"}
 )
 
 
@@ -42,36 +42,40 @@ func main() {
 
 	now := time.Now()
 	yesterday := now.Add(-24 * time.Hour)
-	call := service.Search.List("id,snippet").
-		Q(*query).
-		MaxResults(*maxResults).
-		Order("date").
-		PublishedAfter(yesterday.Format(time.RFC3339))
-	response, err := call.Do()
-	if err != nil {
-		log.Fatalf("error making search API call: %v", err)
-	}
 
 	vKana := &kanachan.Kanachan{}
 	var kana kanachan.Kana = vKana
 
-	videos := make(map[string]Youtube)
-	for _, item := range response.Items {
-		switch item.Id.Kind {
-		case "youtube#video":
-			if kana.ExceptCheck(item.Snippet.Title) && kana.ExceptCheck(item.Snippet.Description) {
-				videos[item.Id.VideoId] = Youtube{item.Snippet.Title, item.Snippet.Description, item.Snippet.Thumbnails.Default.Url}
+	for _, query := range query_words {
+		call := service.Search.List("id,snippet").
+			Q(query).
+			MaxResults(*maxResults).
+			Order("date").
+			PublishedAfter(yesterday.Format(time.RFC3339))
+		response, err := call.Do()
+
+		if err != nil {
+			log.Fatalf("error making search API call: %v", err)
+		}
+
+		videos := make(map[string]Youtube)
+		for _, item := range response.Items {
+			switch item.Id.Kind {
+			case "youtube#video":
+				if kana.ExceptCheck(item.Snippet.Title) && kana.ExceptCheck(item.Snippet.Description) {
+					videos[item.Id.VideoId] = Youtube{item.Snippet.Title, item.Snippet.Description, item.Snippet.Thumbnails.Default.Url}
+				}
 			}
 		}
-	}
 
-	printIDs("videos", videos)
+		printIDs("videos", videos)
 
-	myDb := &dbyoutube.DBYoutubeMovie{}
-	var db dbyoutube.YoutubeMovie = myDb
+		myDb := &dbyoutube.DBYoutubeMovie{}
+		var db dbyoutube.YoutubeMovie = myDb
 
-	for id, youtube := range videos {
-		db.Add(youtube.title, id, youtube.description)
+		for id, youtube := range videos {
+			db.Add(youtube.title, id, youtube.description)
+		}
 	}
 }
 

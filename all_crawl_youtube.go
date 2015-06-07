@@ -17,7 +17,6 @@ import (
 var (
 	maxResults = flag.Int64("max-results", 50, "Max Youtube results")
 	query_words = [...]string{"花澤香菜", "花澤病"}
-	except_words = [...]string{"歌ってみた", "踊ってみた"}
 )
 
 
