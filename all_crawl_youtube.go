@@ -5,24 +5,23 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
-	"database/sql"
 	"os"
-	"strings"
 
 	"code.google.com/p/google-api-go-client/googleapi/transport"
 	"code.google.com/p/google-api-go-client/youtube/v3"
-	_ "github.com/go-sql-driver/mysql"
+
+	"./dbyoutube"
+	"./kanachan"
 )
 
 var (
 	maxResults = flag.Int64("max-results", 50, "Max Youtube results")
-	except_words = [...]string{"歌ってみた", "踊ってみた"}
 	query_words = [...]string{"花澤香菜", "花澤病"}
+	except_words = [...]string{"歌ってみた", "踊ってみた"}
 )
 
 
-type YoutubeMovie struct {
+type Youtube struct {
 	title string
 	description string
 	thumbnail string
@@ -40,6 +39,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error creating Youtube client: %v", err)
 	}
+
+
+	vKana := &kanachan.Kanachan{}
+	var kana kanachan.Kana = vKana
 
 	for _, query := range query_words {
 
@@ -60,12 +63,12 @@ func main() {
 				log.Fatalf("error making search API call: %v", err)
 			}
 
-			videos := make(map[string]YoutubeMovie)
+			videos := make(map[string]Youtube)
 			for _, item := range response.Items {
 				switch item.Id.Kind {
 				case "youtube#video":
-					if except_check(item.Snippet.Title) && except_check(item.Snippet.Description) {
-						videos[item.Id.VideoId] = YoutubeMovie{item.Snippet.Title, item.Snippet.Description, item.Snippet.Thumbnails.Default.Url}
+					if kana.ExceptCheck(item.Snippet.Title) && kana.ExceptCheck(item.Snippet.Description) {
+						videos[item.Id.VideoId] = Youtube{item.Snippet.Title, item.Snippet.Description, item.Snippet.Thumbnails.Default.Url}
 					}
 				}
 			}
@@ -73,37 +76,20 @@ func main() {
 
 			printIDs("videos", videos)
 
-			db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-			if err != nil {
-				panic(err.Error())
-			}
+			myDb := &dbyoutube.DBYoutubeMovie{}
+			var db dbyoutube.YoutubeMovie = myDb
 
 			for id, youtube := range videos {
-
-				_, err := db.Exec("insert into youtube_movies (title, movie_id, description, disabled, created_at) values (?, ?, ?, ?, ?)", youtube.title, id, youtube.description, 0, time.Now())
-				if err != nil {
-					fmt.Printf("mysql connect error: %v \n", err)
-				}
+				db.Add(youtube.title, id, youtube.description)
 			}
-
-			db.Close()
 		}
 	}
 }
 
-func printIDs(sectionName string, matches map[string]YoutubeMovie) {
+func printIDs(sectionName string, matches map[string]Youtube) {
 	fmt.Printf("%v:\n", sectionName)
 	for id, youtube := range matches {
 		fmt.Printf("[%v] %v : %v \n", id, youtube.title, youtube.description)
 	}
 	fmt.Printf("\n\n")
-}
-
-func except_check(word string) bool {
-	for _, except := range except_words {
-		if strings.Contains(word, except) {
-			return false
-		}
-	}
-	return true
 }
