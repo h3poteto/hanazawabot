@@ -16,9 +16,9 @@ import (
 )
 
 var (
-	query = flag.String("query", "花澤香菜", "search term")
 	maxResults = flag.Int64("max-results", 50, "Max Youtube results")
 	except_words = [...]string{"歌ってみた", "踊ってみた"}
+	query_words = [...]string{"花澤香菜", "花澤病"}
 )
 
 
@@ -41,50 +41,53 @@ func main() {
 		log.Fatalf("Error creating Youtube client: %v", err)
 	}
 
-	nextPageToken := "hanazawabot_token"
+	for _, query := range query_words {
 
-	for nextPageToken != "" {
-		if nextPageToken == "hanazawabot_token" {
-			nextPageToken = ""
-		}
-		call := service.Search.List("id,snippet").
-			Q(*query).
-			MaxResults(*maxResults).
-			Type("video").
-			PageToken(nextPageToken)
+		nextPageToken := "hanazawabot_token"
 
-		response, err := call.Do()
-		if err != nil {
-			log.Fatalf("error making search API call: %v", err)
-		}
+		for nextPageToken != "" {
+			if nextPageToken == "hanazawabot_token" {
+				nextPageToken = ""
+			}
+			call := service.Search.List("id,snippet").
+				Q(query).
+				MaxResults(*maxResults).
+				Type("video").
+				PageToken(nextPageToken)
 
-		videos := make(map[string]YoutubeMovie)
-		for _, item := range response.Items {
-			switch item.Id.Kind {
-			case "youtube#video":
-				if except_check(item.Snippet.Title) && except_check(item.Snippet.Description) {
-					videos[item.Id.VideoId] = YoutubeMovie{item.Snippet.Title, item.Snippet.Description, item.Snippet.Thumbnails.Default.Url}
+			response, err := call.Do()
+			if err != nil {
+				log.Fatalf("error making search API call: %v", err)
+			}
+
+			videos := make(map[string]YoutubeMovie)
+			for _, item := range response.Items {
+				switch item.Id.Kind {
+				case "youtube#video":
+					if except_check(item.Snippet.Title) && except_check(item.Snippet.Description) {
+						videos[item.Id.VideoId] = YoutubeMovie{item.Snippet.Title, item.Snippet.Description, item.Snippet.Thumbnails.Default.Url}
+					}
 				}
 			}
-		}
-		nextPageToken = response.NextPageToken
+			nextPageToken = response.NextPageToken
 
-		printIDs("videos", videos)
+			printIDs("videos", videos)
 
-		db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-		if err != nil {
-			panic(err.Error())
-		}
-
-		for id, youtube := range videos {
-
-			_, err := db.Exec("insert into youtube_movies (title, movie_id, description, disabled, created_at) values (?, ?, ?, ?, ?)", youtube.title, id, youtube.description, 0, time.Now())
+			db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
 			if err != nil {
-				log.Fatalf("mysql connect error: %v", err)
+				panic(err.Error())
 			}
-		}
 
-		db.Close()
+			for id, youtube := range videos {
+
+				_, err := db.Exec("insert into youtube_movies (title, movie_id, description, disabled, created_at) values (?, ?, ?, ?, ?)", youtube.title, id, youtube.description, 0, time.Now())
+				if err != nil {
+					fmt.Printf("mysql connect error: %v \n", err)
+				}
+			}
+
+			db.Close()
+		}
 	}
 }
 
