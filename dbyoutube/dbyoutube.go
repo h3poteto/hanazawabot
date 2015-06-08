@@ -2,7 +2,6 @@ package dbyoutube
 
 import (
 	"fmt"
-	_ "log"
 	"time"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
