@@ -8,6 +8,7 @@ import (
 	"github.com/ChimeraCoder/anaconda"
 
 	"./dbyoutube"
+	"./dbserif"
 )
 
 func main() {
@@ -16,16 +17,22 @@ func main() {
 	api := anaconda.NewTwitterApi(os.Getenv("TWITTER_OAUTH_TOKEN"), os.Getenv("TWITTER_OAUTH_SECRET"))
 
 
-	myDb := &dbyoutube.DBYoutubeMovie{}
-	var db dbyoutube.YoutubeMovie = myDb
+	ydb := &dbyoutube.DBYoutubeMovie{}
+	var youtube_movie dbyoutube.YoutubeMovie = ydb
 
-	youtube_url, err := db.SelectRandom()
+	youtube_url, err := youtube_movie.SelectRandom()
 	if err != "" {
 		log.Fatalf("DBYoutube random select error: %v", err)
 	}
 	fmt.Printf("%v \n", youtube_url)
 
-	_, error := api.PostTweet("わーい" + youtube_url, nil)
+	sdb := &dbserif.DBSerif{}
+	var serif dbserif.Serif = sdb
+	tweet_serif, err := serif.SelectRandom()
+	if err != "" {
+		log.Fatalf("DBSerif random select error: %v", err)
+	}
+	_, error := api.PostTweet(tweet_serif + " " + youtube_url, nil)
 	if error != nil {
 		log.Fatalf("twitter api error: %v", error)
 	}

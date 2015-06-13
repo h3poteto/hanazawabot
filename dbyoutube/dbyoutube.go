@@ -3,6 +3,7 @@ package dbyoutube
 import (
 	"fmt"
 	"time"
+	"log"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -58,5 +59,10 @@ func (u *DBYoutubeMovie) SelectRandom() (tweet string, error string) {
 }
 
 func (u *DBYoutubeMovie) convertYoutubeID(movie_id string) string {
-	return "https://www.youtube.com/watch?v=" + movie_id
+	if movie_id != "" {
+		return "https://www.youtube.com/watch?v=" + movie_id
+	} else {
+		log.Fatalf("cannot found youtue movie in db")
+		return ""
+	}
 }

@@ -9,6 +9,7 @@ import(
 	"github.com/ChimeraCoder/anaconda"
 	"./kanachan"
 	"./dbyoutube"
+	"./dbserif"
 
 )
 
@@ -41,14 +42,25 @@ func main() {
 			} else if checkReply(tweet, self) {
 				youtube_url, err := youtubedb.SelectRandom()
 				if err != "" {
-					fmt.Printf("DBYoutube random select error: %v", err)
+					fmt.Printf("DBYoutube random select error: %v\n", err)
 					continue
 				}
 				tweet_value := url.Values{}
 				tweet_value.Set("in_reply_to_status_id", tweet.IdStr)
-				_, error := api.PostTweet("@" + tweet.User.ScreenName + " " + youtube_url, tweet_value)
+
+				sdb := &dbserif.DBSerif{}
+				var serif dbserif.Serif = sdb
+				tweet_serif, err := serif.SelectRandom()
+				if err != "" {
+					fmt.Printf("DBSerif random select error: %v\n", err)
+					continue
+				}
+
+				_, error := api.PostTweet("@" + tweet.User.ScreenName + " " + tweet_serif + " " + youtube_url, tweet_value)
 				if error != nil {
-					fmt.Printf("twitter api error: %v", error)
+					fmt.Printf("twitter api error: %v\n", error)
+				} else {
+					fmt.Printf("reply to @%v: %v\n", tweet.User.ScreenName, tweet_serif)
 				}
 
 			} else {
