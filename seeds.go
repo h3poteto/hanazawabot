@@ -73,7 +73,7 @@ func create_tweets() {
 
 	_, err = db.Query("select tweets.id from tweets;")
 	if err != nil {
-		_, _ = db.Exec("CREATE TABLE tweets (id int(11) NOT NULL AUTO_INCREMENT, user_id int(11), tweet varchar(255) DEFAULT NULL, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
+		_, _ = db.Exec("CREATE TABLE tweets (id int(11) NOT NULL AUTO_INCREMENT, user_id int(11), tweet varchar(255) DEFAULT NULL, tweet_id bigint(20) unsigned NOT NULL, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
 	}
 }
 

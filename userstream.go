@@ -10,6 +10,7 @@ import(
 	"./kanachan"
 	"./dbyoutube"
 	"./dbserif"
+	"./dbtweet"
 
 )
 
@@ -35,6 +36,8 @@ func main() {
 			var kana kanachan.Kana = aKana
 			if kana.IncludeCheck(tweet.Text) {
 				// contain
+				tdb := &dbtweet.DBTweet{}
+				var tweetdb dbtweet.Tweet = tdb
 			}
 
 			if checkRetweet(tweet, self) {
