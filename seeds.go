@@ -9,6 +9,7 @@ import (
 func main() {
 	create_youtube_movies()
 	create_serifs()
+	create_users()
 }
 
 func create_youtube_movies() {
@@ -46,5 +47,29 @@ func create_serifs() {
 		"弟紹介しようか？")
 	if err != nil {
 		log.Fatalf("mysql connect error: %v", err)
+	}
+}
+
+func create_users() {
+	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	_, err = db.Query("select users.id from users;")
+	if err != nil {
+		_, _ = db.Exec("CREATE TABLE users (id int(11) NOT NULL AUTO_INCREMENT, twitter_id bigint(20) unsigned NOT NULL, screen_name varchar(255) DEFAULT NULL, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
+	}
+}
+
+func create_tweets() {
+	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	_, err = db.Query("select tweets.id from tweets;")
+	if err != nil {
+		_, _ = db.Exec("CREATE TABLE tweets (id int(11) NOT NULL AUTO_INCREMENT, user_id int(11), tweet varchar(255) DEFAULT NULL, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
 	}
 }

@@ -34,12 +34,13 @@ func main() {
 			aKana := &kanachan.Kanachan{}
 			var kana kanachan.Kana = aKana
 			if kana.IncludeCheck(tweet.Text) {
-				// DB保存
+				// contain
 			}
-			// RTチェック
-			// TODO: リプライチェック
+
 			if checkRetweet(tweet, self) {
+				// retweet
 			} else if checkReply(tweet, self) {
+				// reply
 				youtube_url, err := youtubedb.SelectRandom()
 				if err != "" {
 					fmt.Printf("DBYoutube random select error: %v\n", err)
