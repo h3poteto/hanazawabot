@@ -11,6 +11,7 @@ import(
 	"./dbyoutube"
 	"./dbserif"
 	"./dbtweet"
+	"./dbuser"
 
 )
 
@@ -38,6 +39,10 @@ func main() {
 				// contain
 				tdb := &dbtweet.DBTweet{}
 				var tweetdb dbtweet.Tweet = tdb
+
+				udb := &dbuser.DBUser{}
+				var userdb dbuser.User = udb
+
 			}
 
 			if checkRetweet(tweet, self) {
