@@ -12,7 +12,6 @@ import(
 	"./dbserif"
 	"./dbtweet"
 	"./dbuser"
-
 )
 
 func main() {
@@ -51,7 +50,7 @@ func main() {
 			}
 
 			if isRetweet(tweet, self) {
-				// retweet
+				// TODO: retweetの処理
 			} else if isReply(tweet, self) {
 				// reply
 				youtube_url, err := youtubedb.SelectRandom()
@@ -80,7 +79,11 @@ func main() {
 			} else {
 				continue
 			}
-			// favチェック
+		case anaconda.EventTweet:
+			event_tweet := event.(anaconda.EventTweet)
+			if event_tweet.Event.Event == "favorite" {
+				// TODO: favの処理
+			}
 		}
 	}
 }
