@@ -51,6 +51,7 @@ func main() {
 
 			if isRetweet(tweet, self) {
 				// TODO: retweetの処理
+
 			} else if isReply(tweet, self) {
 				// reply
 				youtube_url, err := youtubedb.SelectRandom()
