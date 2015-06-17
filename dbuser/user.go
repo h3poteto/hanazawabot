@@ -10,6 +10,7 @@ import (
 type User interface {
 	Add(int64, string) bool
 	Select(int64, string) DBUser
+	SelectOrAdd(int64, string) DBUser
 }
 
 type DBUser struct {
@@ -21,12 +22,13 @@ type DBUser struct {
 func (u *DBUser) Add(twitter_id int64, screen_name string) bool {
 	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
 	if err != nil {
-		panic(err.Error())
+		return false
 	}
 
-	_, err = db.Exec("insert into user (twitter_id, screen_name, created_at) values (?, ?, ?)", twitter_id, screen_name, time.Now())
+	_, err = db.Exec("insert into users (twitter_id, screen_name, created_at) values (?, ?, ?)", twitter_id, screen_name, time.Now())
 	if err != nil {
 		fmt.Printf("mysql connect error: %v \n", err)
+		return false
 	}
 
 	defer db.Close()
@@ -63,5 +65,16 @@ func (u *DBUser) Select(twitter_id int64, screen_name string) DBUser {
 	}
 
 	user := DBUser{Id: id, TwitterID: twitter, ScreenName: screen_name}
+	return user
+}
+
+func (u *DBUser) SelectOrAdd(twitter_id int64, screen_name string) DBUser {
+	user := u.Select(twitter_id, screen_name)
+	if user.Id == 0 {
+		result := u.Add(twitter_id, screen_name)
+		if result {
+			user = u.Select(twitter_id, screen_name)
+		}
+	}
 	return user
 }

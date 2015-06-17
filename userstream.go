@@ -43,11 +43,16 @@ func main() {
 				udb := &dbuser.DBUser{}
 				var userdb dbuser.User = udb
 
+				user := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
+
+				if user.Id != 0 && !isMyself(tweet, self) {
+					_ = tweetdb.Add(user.Id, tweet.Text, tweet.Id)
+				}
 			}
 
-			if checkRetweet(tweet, self) {
+			if isRetweet(tweet, self) {
 				// retweet
-			} else if checkReply(tweet, self) {
+			} else if isReply(tweet, self) {
 				// reply
 				youtube_url, err := youtubedb.SelectRandom()
 				if err != "" {
@@ -80,7 +85,7 @@ func main() {
 	}
 }
 
-func checkReply(tweet anaconda.Tweet, user anaconda.User) bool {
+func isReply(tweet anaconda.Tweet, user anaconda.User) bool {
 	if tweet.InReplyToUserID == user.Id {
 		return true
 	}
@@ -90,8 +95,16 @@ func checkReply(tweet anaconda.Tweet, user anaconda.User) bool {
 	return false
 }
 
-func checkRetweet(tweet anaconda.Tweet, user anaconda.User) bool {
+func isRetweet(tweet anaconda.Tweet, user anaconda.User) bool {
 	if strings.Index(tweet.Text, "RT") == 0 && tweet.User.Id != user.Id && strings.Contains(tweet.Text, "@" + user.ScreenName) {
+		return true
+	} else {
+		return false
+	}
+}
+
+func isMyself(tweet anaconda.Tweet, user anaconda.User) bool {
+	if tweet.User.Id == user.Id {
 		return true
 	} else {
 		return false
