@@ -4,9 +4,14 @@ import (
 	"fmt"
 	"time"
 	"log"
+	"strings"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ChimeraCoder/anaconda"
+)
+
+var (
+	youtube_prefix = "https://www.youtube.com/watch?v="
 )
 
 type YoutubeMovie interface {
@@ -14,8 +19,8 @@ type YoutubeMovie interface {
 	SelectRandom() (tweet string, error string)
 	convertYoutubeID(string) string
 	revertYoutubeID(string) string
-	ScanYoutubeMovie(anaconda.Tweet) DBYoutubeMovie
-	Select(int, string) bool
+	ScanYoutubeMovie(anaconda.Tweet) *DBYoutubeMovie
+	Select(int, string) *DBYoutubeMovie
 }
 
 type DBYoutubeMovie struct {
@@ -69,7 +74,7 @@ func (u *DBYoutubeMovie) SelectRandom() (tweet string, error string) {
 
 func (u *DBYoutubeMovie) convertYoutubeID(movie_id string) string {
 	if movie_id != "" {
-		return "https://www.youtube.com/watch?v=" + movie_id
+		return youtube_prefix + movie_id
 	} else {
 		log.Fatalf("cannot found youtue movie in db")
 		return ""
@@ -77,17 +82,22 @@ func (u *DBYoutubeMovie) convertYoutubeID(movie_id string) string {
 }
 
 func (u *DBYoutubeMovie) revertYoutubeID(url string) string {
-	// TODO:  内部実装
+	params := strings.Replace(url, youtube_prefix, "", -1)
+	movies := strings.Split(params, "?")
+	for _, id := range movies {
+		return id
+	}
+	return ""
 }
 
-func (u *DBYoutubeMovie) ScanYoutubeMovie(tweet anaconda.Tweet) DBYoutubeMovie {
+func (u *DBYoutubeMovie) ScanYoutubeMovie(tweet anaconda.Tweet) *DBYoutubeMovie {
 	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
 	defer db.Close()
 	if err != nil {
 		fmt.Printf("mysql connect error: %v \n", err)
 	}
 
-	for url := tweet.Entities.Urls {
+	for _, url := range tweet.Entities.Urls {
 		movie := u.Select(0, u.revertYoutubeID(url.Expanded_url))
 		if movie != nil {
 			return movie
@@ -96,7 +106,7 @@ func (u *DBYoutubeMovie) ScanYoutubeMovie(tweet anaconda.Tweet) DBYoutubeMovie {
 	return nil
 }
 
-func (u *DBYoutubeMovie) Select(id int, keyword string) DBYoutubeMovie {
+func (u *DBYoutubeMovie) Select(id int, keyword string) *DBYoutubeMovie {
 	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
 	defer db.Close()
 	if err != nil {
@@ -117,6 +127,9 @@ func (u *DBYoutubeMovie) Select(id int, keyword string) DBYoutubeMovie {
 			return nil
 		}
 	}
-
-	return DBYoutubeMovie{Id: id, Title: title, MovieId: movie_id, Description: description, Disabled: disabled}
+	fdisabled := false
+	if disabled != 0 {
+		fdisabled = true
+	}
+	return &DBYoutubeMovie{Id: id, Title: title, MovieId: movie_id, Description: description, Disabled: fdisabled}
 }

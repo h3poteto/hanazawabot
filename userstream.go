@@ -50,7 +50,8 @@ func main() {
 			}
 
 			if isRetweet(tweet, self) {
-				// TODO: retweetの処理
+				movie := youtubedb.ScanYoutubeMovie(tweet)
+				fmt.Println(movie.Id)
 
 			} else if isReply(tweet, self) {
 				// reply
