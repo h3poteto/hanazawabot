@@ -12,6 +12,7 @@ import(
 	"./dbserif"
 	"./dbtweet"
 	"./dbuser"
+	"./dbretweet"
 )
 
 func main() {
@@ -51,7 +52,18 @@ func main() {
 
 			if isRetweet(tweet, self) {
 				movie := youtubedb.ScanYoutubeMovie(tweet)
-				fmt.Println(movie.Id)
+
+				rdb := &dbretweet.DBRetweet{}
+				var retweetdb dbretweet.Retweet = rdb
+
+				udb := &dbuser.DBUser{}
+				var userdb dbuser.User = udb
+
+				user := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
+
+				if user.Id != 0 {
+					_ = retweetdb.Add(user.Id, movie.Id)
+				}
 
 			} else if isReply(tweet, self) {
 				// reply
