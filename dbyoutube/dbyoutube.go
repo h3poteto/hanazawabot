@@ -3,7 +3,6 @@ package dbyoutube
 import (
 	"fmt"
 	"time"
-	"log"
 	"strings"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
@@ -16,11 +15,12 @@ var (
 
 type YoutubeMovie interface {
 	Add(string, string, string) bool
-	SelectRandom() (tweet string, error string)
+	SelectRandom() *DBYoutubeMovie
 	convertYoutubeID(string) string
 	revertYoutubeID(string) string
 	ScanYoutubeMovie(anaconda.Tweet) *DBYoutubeMovie
 	Select(int, string) *DBYoutubeMovie
+	GetRandomMovieURL() string
 }
 
 type DBYoutubeMovie struct {
@@ -48,7 +48,7 @@ func (u *DBYoutubeMovie) Add(title string, id string, description string) bool {
 	return true
 }
 
-func (u *DBYoutubeMovie) SelectRandom() (tweet string, error string) {
+func (u *DBYoutubeMovie) SelectRandom() *DBYoutubeMovie {
 	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
 	if err != nil {
 		panic(err.Error())
@@ -65,18 +65,33 @@ func (u *DBYoutubeMovie) SelectRandom() (tweet string, error string) {
 	for rows.Next() {
 		err = rows.Scan(&id, &title, &movie_id, &description, &disabled, &created_at, &updated_at)
 		if err != nil{
-			return "", err.Error()
+			return nil
 		}
 	}
 
-	return u.convertYoutubeID(movie_id), ""
+	fdisabled := false
+	if disabled != 0 {
+		fdisabled = true
+	}
+
+	return &DBYoutubeMovie{Id: id, Title: title, MovieId: movie_id, Description: description, Disabled: fdisabled}
+
+}
+
+func (u *DBYoutubeMovie) GetRandomMovieURL() string {
+	youtube_movie := u.SelectRandom()
+	if youtube_movie == nil {
+		return ""
+	} else {
+		return u.convertYoutubeID(youtube_movie.MovieId)
+	}
 }
 
 func (u *DBYoutubeMovie) convertYoutubeID(movie_id string) string {
 	if movie_id != "" {
 		return youtube_prefix + movie_id
 	} else {
-		log.Fatalf("cannot found youtue movie in db")
+		fmt.Printf("cannot found youtue movie in db")
 		return ""
 	}
 }

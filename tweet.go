@@ -20,11 +20,10 @@ func main() {
 	ydb := &dbyoutube.DBYoutubeMovie{}
 	var youtube_movie dbyoutube.YoutubeMovie = ydb
 
-	youtube_url, err := youtube_movie.SelectRandom()
-	if err != "" {
-		log.Fatalf("DBYoutube random select error: %v", err)
+	youtube_url := youtube_movie.GetRandomMovieURL()
+	if youtube_url == "" {
+		log.Fatalf("DBYoutube random select error")
 	}
-	fmt.Printf("%v \n", youtube_url)
 
 	sdb := &dbserif.DBSerif{}
 	var serif dbserif.Serif = sdb
@@ -36,4 +35,5 @@ func main() {
 	if error != nil {
 		log.Fatalf("twitter api error: %v", error)
 	}
+	fmt.Printf("tweet: %v \n", tweet_serif + " " + youtube_url)
 }

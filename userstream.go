@@ -51,6 +51,7 @@ func main() {
 
 				if user.Id != 0 {
 					_ = tweetdb.Add(user.Id, tweet.Text, tweet.Id)
+					fmt.Printf("Add Tweet Log: %v \n", tweet.Text)
 				}
 			}
 
@@ -70,13 +71,14 @@ func main() {
 
 				if user.Id != 0 {
 					_ = retweetdb.Add(user.Id, movie.Id)
+					fmt.Printf("Add Rewteet Log: %v \n", movie.Id)
 				}
 
 			} else if isReply(tweet, self) {
 				// reply
-				youtube_url, err := youtubedb.SelectRandom()
-				if err != "" {
-					fmt.Printf("DBYoutube random select error: %v\n", err)
+				youtube_url := youtubedb.GetRandomMovieURL()
+				if youtube_url == "" {
+					fmt.Printf("DBYoutube random select error: %v\n", youtube_url)
 					continue
 				}
 				tweet_value := url.Values{}
@@ -94,7 +96,7 @@ func main() {
 				if error != nil {
 					fmt.Printf("twitter api error: %v\n", error)
 				} else {
-					fmt.Printf("reply to @%v: %v\n", tweet.User.ScreenName, tweet_serif)
+					fmt.Printf("reply to @%v: %v\n", tweet.User.ScreenName, "@" + tweet.User.ScreenName + " " + tweet_serif + " " + youtube_url)
 				}
 
 			} else {
@@ -122,6 +124,7 @@ func main() {
 
 				if user.Id != 0 {
 					_ = favdb.Add(user.Id, movie.Id)
+					fmt.Printf("Add Fav Log: %v \n", movie.Id)
 				}
 			}
 		}
