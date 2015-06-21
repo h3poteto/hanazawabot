@@ -13,6 +13,7 @@ import(
 	"./dbtweet"
 	"./dbuser"
 	"./dbretweet"
+	"./dbfav"
 )
 
 func main() {
@@ -56,7 +57,9 @@ func main() {
 			if isRetweet(tweet, self) {
 				// retweet
 				movie := youtubedb.ScanYoutubeMovie(tweet)
-
+				if movie == nil {
+					continue
+				}
 				rdb := &dbretweet.DBRetweet{}
 				var retweetdb dbretweet.Retweet = rdb
 
@@ -100,7 +103,26 @@ func main() {
 		case anaconda.EventTweet:
 			event_tweet := event.(anaconda.EventTweet)
 			if event_tweet.Event.Event == "favorite" {
-				// TODO: favの処理
+				// fav
+				ydb := &dbyoutube.DBYoutubeMovie{}
+				var youtubedb dbyoutube.YoutubeMovie = ydb
+				tweet := *event_tweet.TargetObject
+				movie := youtubedb.ScanYoutubeMovie(tweet)
+				if movie == nil {
+					continue
+				}
+
+				fdb := &dbfav.DBFav{}
+				var favdb dbfav.Fav = fdb
+
+				udb := &dbuser.DBUser{}
+				var userdb dbuser.User = udb
+
+				user := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
+
+				if user.Id != 0 {
+					_ = favdb.Add(user.Id, movie.Id)
+				}
 			}
 		}
 	}
