@@ -29,6 +29,9 @@ func main() {
 		case anaconda.Tweet:
 			tweet := event.(anaconda.Tweet)
 
+			if isMyself(tweet, self) {
+				continue
+			}
 			ydb := &dbyoutube.DBYoutubeMovie{}
 			var youtubedb dbyoutube.YoutubeMovie = ydb
 
@@ -45,12 +48,13 @@ func main() {
 
 				user := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
 
-				if user.Id != 0 && !isMyself(tweet, self) {
+				if user.Id != 0 {
 					_ = tweetdb.Add(user.Id, tweet.Text, tweet.Id)
 				}
 			}
 
 			if isRetweet(tweet, self) {
+				// retweet
 				movie := youtubedb.ScanYoutubeMovie(tweet)
 
 				rdb := &dbretweet.DBRetweet{}
