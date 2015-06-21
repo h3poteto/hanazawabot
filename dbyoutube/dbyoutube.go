@@ -16,11 +16,13 @@ var (
 type YoutubeMovie interface {
 	Add(string, string, string) bool
 	SelectRandom() *DBYoutubeMovie
+	SelectToday() *DBYoutubeMovie
 	convertYoutubeID(string) string
 	revertYoutubeID(string) string
 	ScanYoutubeMovie(anaconda.Tweet) *DBYoutubeMovie
 	Select(int, string) *DBYoutubeMovie
 	GetRandomMovieURL() string
+	GetTodayMovieURL() string
 }
 
 type DBYoutubeMovie struct {
@@ -28,6 +30,7 @@ type DBYoutubeMovie struct {
 	Title string
 	MovieId string
 	Description string
+	Used bool
 	Disabled bool
 }
 
@@ -61,9 +64,9 @@ func (u *DBYoutubeMovie) SelectRandom() *DBYoutubeMovie {
 
 	defer db.Close()
 
-	id, movie_id, title, description, disabled, created_at, updated_at := 0, "", "", "", 0 , "", ""
+	id, movie_id, title, description,used, disabled, created_at, updated_at := 0, "", "", "", 0, 0 , "", ""
 	for rows.Next() {
-		err = rows.Scan(&id, &title, &movie_id, &description, &disabled, &created_at, &updated_at)
+		err = rows.Scan(&id, &title, &movie_id, &description, &used, &disabled, &created_at, &updated_at)
 		if err != nil{
 			return nil
 		}
@@ -74,12 +77,61 @@ func (u *DBYoutubeMovie) SelectRandom() *DBYoutubeMovie {
 		fdisabled = true
 	}
 
-	return &DBYoutubeMovie{Id: id, Title: title, MovieId: movie_id, Description: description, Disabled: fdisabled}
+	fused := false
+	if used != 0 {
+		fused = true
+	}
+
+	return &DBYoutubeMovie{Id: id, Title: title, MovieId: movie_id, Description: description, Used: fused, Disabled: fdisabled}
 
 }
 
+func (u *DBYoutubeMovie) SelectToday() *DBYoutubeMovie {
+	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	yesterday := time.Now().Add(-24 * time.Hour)
+	rows, err := db.Query("select * from youtube_movies where created_at > ? and used = 0 limit 1;", yesterday)
+	if err != nil {
+		fmt.Printf("mysql connect error: %v \n", err)
+	}
+
+	defer db.Close()
+
+	id, movie_id, title, description, used, disabled, created_at, updated_at := 0, "", "", "", 0, 0 , "", ""
+	for rows.Next() {
+		err = rows.Scan(&id, &title, &movie_id, &description, &used, &disabled, &created_at, &updated_at)
+		if err != nil{
+			return nil
+		}
+	}
+
+	fdisabled := false
+	if disabled != 0 {
+		fdisabled = true
+	}
+	fused := false
+	if used != 0 {
+		fused = true
+	}
+
+	return &DBYoutubeMovie{Id: id, Title: title, MovieId: movie_id, Description: description, Used: fused, Disabled: fdisabled}
+}
+
+
 func (u *DBYoutubeMovie) GetRandomMovieURL() string {
 	youtube_movie := u.SelectRandom()
+	if youtube_movie == nil {
+		return ""
+	} else {
+		return u.convertYoutubeID(youtube_movie.MovieId)
+	}
+}
+
+func (u *DBYoutubeMovie) GetTodayMovieURL() string {
+	youtube_movie := u.SelectToday()
 	if youtube_movie == nil {
 		return ""
 	} else {
@@ -135,9 +187,9 @@ func (u *DBYoutubeMovie) Select(id int, keyword string) *DBYoutubeMovie {
 		return nil
 	}
 
-	id, movie_id, title, description, disabled, created_at, updated_at := 0, "", "", "", 0 , "", ""
+	id, movie_id, title, description, used, disabled, created_at, updated_at := 0, "", "", "", 0, 0 , "", ""
 	for rows.Next() {
-		err = rows.Scan(&id, &title, &movie_id, &description, &disabled, &created_at, &updated_at)
+		err = rows.Scan(&id, &title, &movie_id, &description, &used, &disabled, &created_at, &updated_at)
 		if err != nil{
 			return nil
 		}
@@ -146,5 +198,10 @@ func (u *DBYoutubeMovie) Select(id int, keyword string) *DBYoutubeMovie {
 	if disabled != 0 {
 		fdisabled = true
 	}
-	return &DBYoutubeMovie{Id: id, Title: title, MovieId: movie_id, Description: description, Disabled: fdisabled}
+
+	fused := false
+	if used != 0 {
+		fused = true
+	}
+	return &DBYoutubeMovie{Id: id, Title: title, MovieId: movie_id, Description: description, Used: fused, Disabled: fdisabled}
 }
