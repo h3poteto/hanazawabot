@@ -73,22 +73,13 @@ func main() {
 			}
 			nextPageToken = response.NextPageToken
 
-			printIDs("videos", videos)
-
 			myDb := &dbyoutube.DBYoutubeMovie{}
 			var db dbyoutube.YoutubeMovie = myDb
 
 			for id, youtube := range videos {
 				db.Add(youtube.title, id, youtube.description)
+				fmt.Printf("add youtube_movies to: %v \n", youtube.title)
 			}
 		}
 	}
-}
-
-func printIDs(sectionName string, matches map[string]Youtube) {
-	fmt.Printf("%v:\n", sectionName)
-	for id, youtube := range matches {
-		fmt.Printf("[%v] %v : %v \n", id, youtube.title, youtube.description)
-	}
-	fmt.Printf("\n\n")
 }

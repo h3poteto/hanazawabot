@@ -51,7 +51,7 @@ func main() {
 	for _, follower := range diff {
 		user, err := api.FollowUserId(follower, empty_values)
 		if err != nil {
-			log.Fatalf("twitter follow error: %v", err)
+			fmt.Printf("twitter follow error: %v", err)
 		} else {
 			fmt.Printf("follow new user: %d \n", user.Id)
 		}
