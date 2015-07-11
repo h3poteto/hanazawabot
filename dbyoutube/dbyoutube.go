@@ -7,6 +7,8 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ChimeraCoder/anaconda"
+
+	"../database"
 )
 
 var (
@@ -32,16 +34,25 @@ type DBYoutubeMovie struct {
 	Description string
 	Used bool
 	Disabled bool
+	dbobject database.DB
 }
 
+func (self *DBYoutubeMovie) Initialize() {
+	myDatabase := &database.Database{}
+	var myDb database.DB = myDatabase
+	self.dbobject = myDb
+}
+
+func NewDBYoutubeMovie() *DBYoutubeMovie {
+	dbyoutube := &DBYoutubeMovie{}
+	dbyoutube.Initialize()
+	return dbyoutube
+}
 
 func (u *DBYoutubeMovie) Add(title string, id string, description string) bool {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := u.dbobject.Init()
 
-	_, err = db.Exec("insert into youtube_movies (title, movie_id, description, disabled, created_at) values (?, ?, ?, ?, ?)", title, id, description, 0, time.Now())
+	_, err := db.Exec("insert into youtube_movies (title, movie_id, description, disabled, created_at) values (?, ?, ?, ?, ?)", title, id, description, 0, time.Now())
 	if err != nil {
 		fmt.Printf("mysql connect error: %v \n", err)
 	}

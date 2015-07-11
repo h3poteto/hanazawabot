@@ -68,7 +68,7 @@ func main() {
 			}
 		}
 
-		myDb := &dbyoutube.DBYoutubeMovie{}
+		myDb := dbyoutube.NewDBYoutubeMovie()
 		var db dbyoutube.YoutubeMovie = myDb
 
 		for id, youtube := range videos {
