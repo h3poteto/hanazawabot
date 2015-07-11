@@ -17,7 +17,7 @@ func main() {
 	api := anaconda.NewTwitterApi(os.Getenv("TWITTER_OAUTH_TOKEN"), os.Getenv("TWITTER_OAUTH_SECRET"))
 
 
-	ydb := &dbyoutube.DBYoutubeMovie{}
+	ydb := dbyoutube.NewDBYoutubeMovie()
 	var youtube_movie dbyoutube.YoutubeMovie = ydb
 
 	youtube_url := youtube_movie.GetRandomMovieURL()

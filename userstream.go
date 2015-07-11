@@ -33,7 +33,7 @@ func main() {
 			if isMyself(tweet, self) {
 				continue
 			}
-			ydb := &dbyoutube.DBYoutubeMovie{}
+			ydb := dbyoutube.NewDBYoutubeMovie()
 			var youtubedb dbyoutube.YoutubeMovie = ydb
 
 
@@ -44,7 +44,7 @@ func main() {
 				tdb := &dbtweet.DBTweet{}
 				var tweetdb dbtweet.Tweet = tdb
 
-				udb := &dbuser.DBUser{}
+				udb := dbuser.NewDBUser()
 				var userdb dbuser.User = udb
 
 				user := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
@@ -64,7 +64,7 @@ func main() {
 				rdb := &dbretweet.DBRetweet{}
 				var retweetdb dbretweet.Retweet = rdb
 
-				udb := &dbuser.DBUser{}
+				udb := dbuser.NewDBUser()
 				var userdb dbuser.User = udb
 
 				user := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
@@ -106,7 +106,7 @@ func main() {
 			event_tweet := event.(anaconda.EventTweet)
 			if event_tweet.Event.Event == "favorite" {
 				// fav
-				ydb := &dbyoutube.DBYoutubeMovie{}
+				ydb := dbyoutube.NewDBYoutubeMovie()
 				var youtubedb dbyoutube.YoutubeMovie = ydb
 				tweet := *event_tweet.TargetObject
 				movie := youtubedb.ScanYoutubeMovie(tweet)
@@ -117,7 +117,7 @@ func main() {
 				fdb := &dbfav.DBFav{}
 				var favdb dbfav.Fav = fdb
 
-				udb := &dbuser.DBUser{}
+				udb := dbuser.NewDBUser()
 				var userdb dbuser.User = udb
 
 				user := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)

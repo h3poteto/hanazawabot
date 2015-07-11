@@ -5,6 +5,7 @@ import (
 	"time"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"../database"
 )
 
 type User interface {
@@ -17,15 +18,25 @@ type DBUser struct {
 	Id int
 	ScreenName string
 	TwitterID int64
+	dbobject database.DB
+}
+
+func (self *DBUser) Initialize() {
+	myDatabase := &database.Database{}
+	var myDb database.DB = myDatabase
+	self.dbobject = myDb
+}
+
+func NewDBUser() *DBUser {
+	dbuser := &DBUser{}
+	dbuser.Initialize()
+	return dbuser
 }
 
 func (u *DBUser) Add(twitter_id int64, screen_name string) bool {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		return false
-	}
+	db := u.dbobject.Init()
 
-	_, err = db.Exec("insert into users (twitter_id, screen_name, created_at) values (?, ?, ?)", twitter_id, screen_name, time.Now())
+	_, err := db.Exec("insert into users (twitter_id, screen_name, created_at) values (?, ?, ?)", twitter_id, screen_name, time.Now())
 	if err != nil {
 		fmt.Printf("mysql connect error: %v \n", err)
 		return false
@@ -37,20 +48,13 @@ func (u *DBUser) Add(twitter_id int64, screen_name string) bool {
 }
 
 func (u *DBUser) Select(twitter_id int64, screen_name string) DBUser {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := u.dbobject.Init()
 
 	var rows *sql.Rows
 	if twitter_id > 0 {
-		rows, err = db.Query("select * from users where twitter_id = ?;", twitter_id)
+		rows, _ = db.Query("select * from users where twitter_id = ?;", twitter_id)
 	} else {
-		rows, err = db.Query("select * from users where screen_name = ?;", screen_name)
-	}
-
-	if err != nil {
-		fmt.Printf("mysql connect error: %v \n", err)
+		rows, _ = db.Query("select * from users where screen_name = ?;", screen_name)
 	}
 
 	defer db.Close()
@@ -58,7 +62,7 @@ func (u *DBUser) Select(twitter_id int64, screen_name string) DBUser {
 	var twitter int64
 	id, twitter, screen_name, created_at, updated_at := 0, 0, "", "", ""
 	for rows.Next() {
-		err = rows.Scan(&id, &twitter, &screen_name, &created_at, &updated_at)
+		err := rows.Scan(&id, &twitter, &screen_name, &created_at, &updated_at)
 		if err != nil {
 			fmt.Printf("mysql select error: %v \n", err)
 		}
