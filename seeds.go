@@ -2,8 +2,9 @@ package main
 
 import (
 	"log"
-	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+
+	"./database"
 )
 
 func main() {
@@ -16,24 +17,24 @@ func main() {
 }
 
 func create_youtube_movies() {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	myDatabase := &database.Database{}
+	var myDb database.DB = myDatabase
+	db := myDb.Init()
+	defer db.Close()
 
-	_, err = db.Query("select youtube_movies.id from youtube_movies;")
+	_, err := db.Query("select youtube_movies.id from youtube_movies;")
 	if err != nil {
 		_, _ = db.Exec("CREATE TABLE youtube_movies (id int(11) NOT NULL AUTO_INCREMENT, title varchar(255) DEFAULT NULL, movie_id varchar(255) DEFAULT NULL, description text, used tinyint(1) NOT NULL DEFAULT 0, disabled tinyint(1) NOT NULL DEFAULT 0, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
 	}
 }
 
 func create_serifs() {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	myDatabase := &database.Database{}
+	var myDb database.DB = myDatabase
+	db := myDb.Init()
+	defer db.Close()
 
-	_, err = db.Query("select serifs.id from serifs;")
+	_, err := db.Query("select serifs.id from serifs;")
 	if err != nil {
 		_, _ = db.Exec("CREATE TABLE serifs (id int(11) NOT NULL AUTO_INCREMENT, body varchar(255) DEFAULT NULL, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
 	}
@@ -54,36 +55,36 @@ func create_serifs() {
 }
 
 func create_users() {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	myDatabase := &database.Database{}
+	var myDb database.DB = myDatabase
+	db := myDb.Init()
+	defer db.Close()
 
-	_, err = db.Query("select users.id from users;")
+	_, err := db.Query("select users.id from users;")
 	if err != nil {
 		_, _ = db.Exec("CREATE TABLE users (id int(11) NOT NULL AUTO_INCREMENT, twitter_id bigint(20) unsigned NOT NULL, screen_name varchar(255) DEFAULT NULL, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
 	}
 }
 
 func create_tweets() {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	myDatabase := &database.Database{}
+	var myDb database.DB = myDatabase
+	db := myDb.Init()
+	defer db.Close()
 
-	_, err = db.Query("select tweets.id from tweets;")
+	_, err := db.Query("select tweets.id from tweets;")
 	if err != nil {
 		_, _ = db.Exec("CREATE TABLE tweets (id int(11) NOT NULL AUTO_INCREMENT, user_id int(11), tweet varchar(255) DEFAULT NULL, tweet_id bigint(20) unsigned NOT NULL, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
 	}
 }
 
 func create_youtube_movie_favs() {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	myDatabase := &database.Database{}
+	var myDb database.DB = myDatabase
+	db := myDb.Init()
+	defer db.Close()
 
-	_, err = db.Query("select youtube_movie_favs.id from youtube_movie_favs;")
+	_, err := db.Query("select youtube_movie_favs.id from youtube_movie_favs;")
 	if err != nil {
 		_, err = db.Exec("CREATE TABLE youtube_movie_favs (id int(11) NOT NULL AUTO_INCREMENT, user_id int(11), youtube_movie_id int(11), created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
 		if err != nil {
@@ -94,12 +95,12 @@ func create_youtube_movie_favs() {
 
 
 func create_youtube_movie_retweets() {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	myDatabase := &database.Database{}
+	var myDb database.DB = myDatabase
+	db := myDb.Init()
+	defer db.Close()
 
-	_, err = db.Query("select youtube_movie_retweets.id from youtube_movie_retweets;")
+	_, err := db.Query("select youtube_movie_retweets.id from youtube_movie_retweets;")
 	if err != nil {
 		_, err = db.Exec("CREATE TABLE youtube_movie_retweets (id int(11) NOT NULL AUTO_INCREMENT, user_id int(11), youtube_movie_id int(11), created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
 		if err != nil {
