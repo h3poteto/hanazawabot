@@ -63,10 +63,7 @@ func (u *DBYoutubeMovie) Add(title string, id string, description string) bool {
 }
 
 func (u *DBYoutubeMovie) SelectRandom() *DBYoutubeMovie {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := u.dbobject.Init()
 
 	rows, err := db.Query("select * from youtube_movies order by rand() limit 1;")
 	if err != nil {
@@ -98,10 +95,7 @@ func (u *DBYoutubeMovie) SelectRandom() *DBYoutubeMovie {
 }
 
 func (u *DBYoutubeMovie) SelectToday() *DBYoutubeMovie {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := u.dbobject.Init()
 
 	yesterday := time.Now().Add(-24 * time.Hour)
 	rows, err := db.Query("select * from youtube_movies where created_at > ? and used = 0 limit 1;", yesterday)
@@ -169,11 +163,8 @@ func (u *DBYoutubeMovie) revertYoutubeID(url string) string {
 }
 
 func (u *DBYoutubeMovie) ScanYoutubeMovie(tweet anaconda.Tweet) *DBYoutubeMovie {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
+	db := u.dbobject.Init()
 	defer db.Close()
-	if err != nil {
-		fmt.Printf("mysql connect error: %v \n", err)
-	}
 
 	for _, url := range tweet.Entities.Urls {
 		movie := u.Select(0, u.revertYoutubeID(url.Expanded_url))
@@ -185,12 +176,8 @@ func (u *DBYoutubeMovie) ScanYoutubeMovie(tweet anaconda.Tweet) *DBYoutubeMovie 
 }
 
 func (u *DBYoutubeMovie) Select(id int, keyword string) *DBYoutubeMovie {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
+	db := u.dbobject.Init()
 	defer db.Close()
-	if err != nil {
-		fmt.Printf("mysql connect error: %v \n", err)
-		return nil
-	}
 
 	rows, err := db.Query("select * from youtube_movies where movie_id like '%" + keyword + "%' or title like '%" + keyword + "%' or description like '%" + keyword + "%';")
 	if err != nil {
