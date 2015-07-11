@@ -41,7 +41,7 @@ func main() {
 			var kana kanachan.Kana = aKana
 			if kana.IncludeCheck(tweet.Text) {
 				// contain
-				tdb := &dbtweet.DBTweet{}
+				tdb := dbtweet.NewDBTweet()
 				var tweetdb dbtweet.Tweet = tdb
 
 				udb := dbuser.NewDBUser()

@@ -3,8 +3,8 @@ package dbtweet
 import (
 	"fmt"
 	"time"
-	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"../database"
 )
 
 type Tweet interface {
@@ -12,15 +12,25 @@ type Tweet interface {
 }
 
 type DBTweet struct {
+	dbobject database.DB
+}
+
+func (self *DBTweet) Initialize() {
+	myDatabase := &database.Database{}
+	var myDb database.DB = myDatabase
+	self.dbobject = myDb
+}
+
+func NewDBTweet() *DBTweet {
+	dbtweet := &DBTweet{}
+	dbtweet.Initialize()
+	return dbtweet
 }
 
 func (u *DBTweet) Add(user_id int, tweet string, tweet_id int64) bool {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := u.dbobject.Init()
 
-	_, err = db.Exec("insert into tweets (user_id, tweet, tweet_id, created_at) values (?, ?, ?, ?)", user_id, tweet, tweet_id, time.Now())
+	_, err := db.Exec("insert into tweets (user_id, tweet, tweet_id, created_at) values (?, ?, ?, ?)", user_id, tweet, tweet_id, time.Now())
 	if err != nil {
 		fmt.Printf("mysql connect error: %v \n", err)
 	}
