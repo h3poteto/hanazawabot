@@ -24,7 +24,7 @@ func create_youtube_movies() {
 
 	_, err := db.Query("select youtube_movies.id from youtube_movies;")
 	if err != nil {
-		_, _ = db.Exec("CREATE TABLE youtube_movies (id int(11) NOT NULL AUTO_INCREMENT, title varchar(255) DEFAULT NULL, movie_id varchar(255) DEFAULT NULL, description text, used tinyint(1) NOT NULL DEFAULT 0, disabled tinyint(1) NOT NULL DEFAULT 0, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
+		_, _ = db.Exec("CREATE TABLE youtube_movies (id int(11) NOT NULL AUTO_INCREMENT, title varchar(255) DEFAULT NULL, movie_id varchar(255) UNIQUE DEFAULT NULL, description text, used tinyint(1) NOT NULL DEFAULT 0, disabled tinyint(1) NOT NULL DEFAULT 0, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
 	}
 }
 
@@ -36,7 +36,7 @@ func create_serifs() {
 
 	_, err := db.Query("select serifs.id from serifs;")
 	if err != nil {
-		_, _ = db.Exec("CREATE TABLE serifs (id int(11) NOT NULL AUTO_INCREMENT, body varchar(255) DEFAULT NULL, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
+		_, _ = db.Exec("CREATE TABLE serifs (id int(11) NOT NULL AUTO_INCREMENT, body varchar(255) UNIQUE DEFAULT NULL, created_at datetime DEFAULT NULL, updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id)) AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;")
 	}
 
 	_, err = db.Exec("truncate table serifs;")
