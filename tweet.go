@@ -25,7 +25,7 @@ func main() {
 		log.Fatalf("DBYoutube random select error")
 	}
 
-	sdb := &dbserif.DBSerif{}
+	sdb := dbserif.NewDBSerif()
 	var serif dbserif.Serif = sdb
 	tweet_serif, err := serif.SelectRandom()
 	if err != "" {

@@ -26,7 +26,7 @@ func main() {
 	}
 
 
-	sdb := &dbserif.DBSerif{}
+	sdb := dbserif.NewDBSerif()
 	var serif dbserif.Serif = sdb
 	tweet_serif, err := serif.SelectRandom()
 	if err != "" {

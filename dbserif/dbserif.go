@@ -3,8 +3,8 @@ package dbserif
 import (
 	"fmt"
 	"time"
-	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"../database"
 )
 
 type Serif interface {
@@ -13,15 +13,25 @@ type Serif interface {
 }
 
 type DBSerif struct {
+	dbobject database.DB
+}
+
+func (self *DBSerif) Initialize() {
+	myDatabase := &database.Database{}
+	var myDb database.DB = myDatabase
+	self.dbobject = myDb
+}
+
+func NewDBSerif() *DBSerif {
+	dbserif := &DBSerif{}
+	dbserif.Initialize()
+	return dbserif
 }
 
 func (u *DBSerif) Add(body string) bool {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := u.dbobject.Init()
 
-	_, err = db.Exec("insert into serifs (body, created_at) values (?, ?)", body, time.Now())
+	_, err := db.Exec("insert into serifs (body, created_at) values (?, ?)", body, time.Now())
 	if err != nil {
 		fmt.Printf("mysql connect error: %v \n", err)
 	}
@@ -32,10 +42,7 @@ func (u *DBSerif) Add(body string) bool {
 }
 
 func (u *DBSerif) SelectRandom() (tweet string, error string) {
-	db, err := sql.Open("mysql", "root:@/hanazawa?charset=utf8")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := u.dbobject.Init()
 
 	rows, err := db.Query("select * from serifs order by rand() limit 1;")
 	if err != nil {

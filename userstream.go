@@ -84,7 +84,7 @@ func main() {
 				tweet_value := url.Values{}
 				tweet_value.Set("in_reply_to_status_id", tweet.IdStr)
 
-				sdb := &dbserif.DBSerif{}
+				sdb := dbserif.NewDBSerif()
 				var serif dbserif.Serif = sdb
 				tweet_serif, err := serif.SelectRandom()
 				if err != "" {
@@ -114,7 +114,7 @@ func main() {
 					continue
 				}
 
-				fdb := &dbfav.DBFav{}
+				fdb := dbfav.NewDBFav()
 				var favdb dbfav.Fav = fdb
 
 				udb := dbuser.NewDBUser()
