@@ -5,7 +5,7 @@ import (
 	"time"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
-	"../database"
+	"../basedb"
 )
 
 type User interface {
@@ -18,12 +18,12 @@ type DBUser struct {
 	Id int
 	ScreenName string
 	TwitterID int64
-	dbobject database.DB
+	dbobject basedb.DB
 }
 
 func (self *DBUser) Initialize() {
-	myDatabase := &database.Database{}
-	var myDb database.DB = myDatabase
+	myDatabase := &basedb.Database{}
+	var myDb basedb.DB = myDatabase
 	self.dbobject = myDb
 }
 

@@ -10,8 +10,8 @@ import (
 	"code.google.com/p/google-api-go-client/googleapi/transport"
 	"code.google.com/p/google-api-go-client/youtube/v3"
 
-	"./dbyoutube"
-	"./kanachan"
+	"../models/dbyoutube"
+	"../kanachan"
 )
 
 var (

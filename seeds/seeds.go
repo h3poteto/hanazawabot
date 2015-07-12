@@ -4,7 +4,7 @@ import (
 	"log"
 	_ "github.com/go-sql-driver/mysql"
 
-	"./database"
+	"../models/basedb"
 )
 
 func main() {
@@ -17,8 +17,8 @@ func main() {
 }
 
 func create_youtube_movies() {
-	myDatabase := &database.Database{}
-	var myDb database.DB = myDatabase
+	myDatabase := &basedb.Database{}
+	var myDb basedb.DB = myDatabase
 	db := myDb.Init()
 	defer db.Close()
 
@@ -29,8 +29,8 @@ func create_youtube_movies() {
 }
 
 func create_serifs() {
-	myDatabase := &database.Database{}
-	var myDb database.DB = myDatabase
+	myDatabase := &basedb.Database{}
+	var myDb basedb.DB = myDatabase
 	db := myDb.Init()
 	defer db.Close()
 
@@ -55,8 +55,8 @@ func create_serifs() {
 }
 
 func create_users() {
-	myDatabase := &database.Database{}
-	var myDb database.DB = myDatabase
+	myDatabase := &basedb.Database{}
+	var myDb basedb.DB = myDatabase
 	db := myDb.Init()
 	defer db.Close()
 
@@ -67,8 +67,8 @@ func create_users() {
 }
 
 func create_tweets() {
-	myDatabase := &database.Database{}
-	var myDb database.DB = myDatabase
+	myDatabase := &basedb.Database{}
+	var myDb basedb.DB = myDatabase
 	db := myDb.Init()
 	defer db.Close()
 
@@ -79,8 +79,8 @@ func create_tweets() {
 }
 
 func create_youtube_movie_favs() {
-	myDatabase := &database.Database{}
-	var myDb database.DB = myDatabase
+	myDatabase := &basedb.Database{}
+	var myDb basedb.DB = myDatabase
 	db := myDb.Init()
 	defer db.Close()
 
@@ -95,8 +95,8 @@ func create_youtube_movie_favs() {
 
 
 func create_youtube_movie_retweets() {
-	myDatabase := &database.Database{}
-	var myDb database.DB = myDatabase
+	myDatabase := &basedb.Database{}
+	var myDb basedb.DB = myDatabase
 	db := myDb.Init()
 	defer db.Close()
 

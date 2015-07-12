@@ -7,13 +7,13 @@ import(
 	"strings"
 
 	"github.com/ChimeraCoder/anaconda"
-	"./kanachan"
-	"./dbyoutube"
-	"./dbserif"
-	"./dbtweet"
-	"./dbuser"
-	"./dbretweet"
-	"./dbfav"
+	"../kanachan"
+	"../models/dbyoutube"
+	"../models/dbserif"
+	"../models/dbtweet"
+	"../models/dbuser"
+	"../models/dbretweet"
+	"../models/dbfav"
 )
 
 func main() {

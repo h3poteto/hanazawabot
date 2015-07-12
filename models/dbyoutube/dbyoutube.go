@@ -7,7 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ChimeraCoder/anaconda"
 
-	"../database"
+	"../basedb"
 )
 
 var (
@@ -31,12 +31,12 @@ type DBYoutubeMovie struct {
 	Description string
 	Used bool
 	Disabled bool
-	dbobject database.DB
+	dbobject basedb.DB
 }
 
 func (self *DBYoutubeMovie) Initialize() {
-	myDatabase := &database.Database{}
-	var myDb database.DB = myDatabase
+	myDatabase := &basedb.Database{}
+	var myDb basedb.DB = myDatabase
 	self.dbobject = myDb
 }
 

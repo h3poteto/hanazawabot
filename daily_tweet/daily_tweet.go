@@ -6,9 +6,9 @@ import (
 
 	"github.com/ChimeraCoder/anaconda"
 
-	"./dbyoutube"
-	"./dbserif"
-	"./kanachan"
+	"../models/dbyoutube"
+	"../modelsdbserif"
+	"../kanachan"
 )
 
 func main() {
@@ -20,10 +20,11 @@ func main() {
 	ydb := dbyoutube.NewDBYoutubeMovie()
 	var youtube_movie dbyoutube.YoutubeMovie = ydb
 
-	movie := youtube_movie.SelectRandom()
+	movie := youtube_movie.SelectToday()
 	if movie == nil {
-		log.Fatalf("DBYoutube random select error")
+		log.Fatalf("DBYoutube today select error")
 	}
+
 
 	sdb := dbserif.NewDBSerif()
 	var serif dbserif.Serif = sdb

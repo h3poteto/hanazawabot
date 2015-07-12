@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 	_ "github.com/go-sql-driver/mysql"
-	"../database"
+	"../basedb"
 )
 
 type Fav interface {
@@ -12,12 +12,12 @@ type Fav interface {
 }
 
 type DBFav struct {
-	dbobject database.DB
+	dbobject basedb.DB
 }
 
 func (self *DBFav) Initialize() {
-	myDatabase := &database.Database{}
-	var myDb database.DB = myDatabase
+	myDatabase := &basedb.Database{}
+	var myDb basedb.DB = myDatabase
 	self.dbobject = myDb
 }
 
