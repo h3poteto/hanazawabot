@@ -1,0 +1,4 @@
+gom "github.com/go-sql-driver/mysql"
+gom "code.google.com/p/google-api-go-client/googleapi/transport"
+gom "code.google.com/p/google-api-go-client/youtube/v3"
+gom "github.com/ChimeraCoder/anaconda", :commit => "30bbada23836a6a3a3115ece035e3b708fc4c1fb"
