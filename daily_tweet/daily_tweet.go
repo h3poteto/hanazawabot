@@ -7,7 +7,7 @@ import (
 	"github.com/ChimeraCoder/anaconda"
 
 	"../models/dbyoutube"
-	"../modelsdbserif"
+	"../models/dbserif"
 	"../kanachan"
 )
 
