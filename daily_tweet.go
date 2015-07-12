@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"log"
 
@@ -9,6 +8,7 @@ import (
 
 	"./dbyoutube"
 	"./dbserif"
+	"./kanachan"
 )
 
 func main() {
@@ -20,8 +20,8 @@ func main() {
 	ydb := dbyoutube.NewDBYoutubeMovie()
 	var youtube_movie dbyoutube.YoutubeMovie = ydb
 
-	youtube_url := youtube_movie.GetTodayMovieURL()
-	if youtube_url == "" {
+	movie := youtube_movie.SelectToday()
+	if movie == nil {
 		log.Fatalf("DBYoutube today select error")
 	}
 
@@ -33,9 +33,15 @@ func main() {
 		log.Fatalf("DBSerif random select error: %v", err)
 	}
 
-	_, error := api.PostTweet(tweet_serif + " " + youtube_url, nil)
+	aKana := &kanachan.Kanachan{}
+	var kana kanachan.Kana = aKana
+	_, error := api.PostTweet(
+		kana.BuildTweet("",
+			tweet_serif,
+			movie.Title,
+			movie.ConvertYoutubeID()),
+		nil)
 	if error != nil {
 		log.Fatalf("twitter api error: %v", error)
 	}
-	fmt.Printf("tweet: %v \n", tweet_serif + " " + youtube_url)
 }

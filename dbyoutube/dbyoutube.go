@@ -18,12 +18,10 @@ type YoutubeMovie interface {
 	Add(string, string, string) bool
 	SelectRandom() *DBYoutubeMovie
 	SelectToday() *DBYoutubeMovie
-	convertYoutubeID(string) string
+	ConvertYoutubeID() string
 	revertYoutubeID(string) string
 	ScanYoutubeMovie(anaconda.Tweet) *DBYoutubeMovie
 	Select(int, string) *DBYoutubeMovie
-	GetRandomMovieURL() string
-	GetTodayMovieURL() string
 }
 
 type DBYoutubeMovie struct {
@@ -125,27 +123,9 @@ func (u *DBYoutubeMovie) SelectToday() *DBYoutubeMovie {
 }
 
 
-func (u *DBYoutubeMovie) GetRandomMovieURL() string {
-	youtube_movie := u.SelectRandom()
-	if youtube_movie == nil {
-		return ""
-	} else {
-		return u.convertYoutubeID(youtube_movie.MovieId)
-	}
-}
-
-func (u *DBYoutubeMovie) GetTodayMovieURL() string {
-	youtube_movie := u.SelectToday()
-	if youtube_movie == nil {
-		return ""
-	} else {
-		return u.convertYoutubeID(youtube_movie.MovieId)
-	}
-}
-
-func (u *DBYoutubeMovie) convertYoutubeID(movie_id string) string {
-	if movie_id != "" {
-		return youtube_prefix + movie_id
+func (u *DBYoutubeMovie) ConvertYoutubeID() string {
+	if u.MovieId != "" {
+		return youtube_prefix + u.MovieId
 	} else {
 		fmt.Printf("cannot found youtue movie in db")
 		return ""

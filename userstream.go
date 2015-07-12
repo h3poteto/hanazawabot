@@ -76,9 +76,9 @@ func main() {
 
 			} else if isReply(tweet, self) {
 				// reply
-				youtube_url := youtubedb.GetRandomMovieURL()
-				if youtube_url == "" {
-					fmt.Printf("DBYoutube random select error: %v\n", youtube_url)
+				movie := youtubedb.SelectRandom()
+				if movie == nil {
+					fmt.Printf("DBYoutube random select error: %v\n")
 					continue
 				}
 				tweet_value := url.Values{}
@@ -92,11 +92,16 @@ func main() {
 					continue
 				}
 
-				_, error := api.PostTweet("@" + tweet.User.ScreenName + " " + tweet_serif + " " + youtube_url, tweet_value)
+				_, error := api.PostTweet(
+					kana.BuildTweet("@" + tweet.User.ScreenName + " ",
+						tweet_serif,
+						movie.Title,
+						movie.ConvertYoutubeID()),
+					tweet_value)
 				if error != nil {
 					fmt.Printf("twitter api error: %v\n", error)
 				} else {
-					fmt.Printf("reply to @%v: %v\n", tweet.User.ScreenName, "@" + tweet.User.ScreenName + " " + tweet_serif + " " + youtube_url)
+					fmt.Printf("reply to @%v: %v\n", tweet.User.ScreenName, "@" + tweet.User.ScreenName)
 				}
 
 			} else {
