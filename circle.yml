@@ -1,0 +1,14 @@
+dependencies:
+  override:
+    - gom install
+  post:
+    - gom build -o bin/all_crawl_youtube all_crawl_youtube/all_crawl_youtube.go
+    - gom build -o bin/daily_crawl_youtube daily_crawl_youtube/daily_crawl_youtube.go
+    - gom build -o bin/daily_tweet daily_tweet/daily_tweet.go
+    - gom build -o bin/refollow refollow/refollow.go
+    - gom build -o bin/tweet tweet/tweet.go
+    - gom build -o bin/userstream userstream/userstream.go
+
+test:
+  override:
+    - gom test kanachan/kanachan_test.go
