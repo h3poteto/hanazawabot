@@ -1,4 +1,6 @@
 dependencies:
+  pre:
+    - go get github.com/mattn/gom
   override:
     - gom install
   post:
