@@ -11,6 +11,7 @@ import (
 	"../kanachan"
 )
 
+// TODO: select randomではなく今日の分だけ取得できるようにする
 func main() {
 	anaconda.SetConsumerKey(os.Getenv("TWITTER_CONSUMER_KEY"))
 	anaconda.SetConsumerSecret(os.Getenv("TWITTER_CONSUMER_SECRET"))

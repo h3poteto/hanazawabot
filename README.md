@@ -16,4 +16,6 @@ At the first, you should prepare database data, and import all youtube data.
 01 0 * * * /bin/bash -l -c 'cd /home/akira/projects/hanazawabot/bin && ./daily_crawl_youtube >> ../log/daily_crawl_youtube.log 2>> ../log/daily_crawl_youtube.err.log'
 
 11 * * * * /bin/bash -l -c 'cd /home/akira/projects/hanazawabot/bin && ./refollow >> ../log/refollow.log 2>> ../log/refollow.err.log'
+
+49 * * * * /bin/bash -l -c 'cd /home/akira/projects/hanazawabot/bin && ./tweet >> ../log/tweet.log 2>> ../log/tweet.err.log'
 ```
