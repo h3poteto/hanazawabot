@@ -3,6 +3,12 @@
 [![Build Status](https://circleci.com/gh/h3poteto/hanazawabot.svg?style=shield&circle-token=8c81a54ae9fb7455eb8e742c4de3eb818e2c7e6c)]()
 
 ## install
+You have to build all golang files for your environments.
+
+Example:
+```
+gom build -o bin/seeds_386 seeds/seeds.go
+```
 
 ## initial setup
 At the first, you should prepare database data, and import all youtube data.
