@@ -24,4 +24,6 @@ At the first, you should prepare database data, and import all youtube data.
 11 * * * * /bin/bash -l -c 'cd /home/akira/projects/hanazawabot/bin && ./refollow >> ../log/refollow.log 2>> ../log/refollow.err.log'
 
 49 * * * * /bin/bash -l -c 'cd /home/akira/projects/hanazawabot/bin && ./tweet >> ../log/tweet.log 2>> ../log/tweet.err.log'
+
+*/5 * * * * /bin/bash -l -c 'cd /home/akira/projects/hanazawabot/bin && if [ ! -e ../tmp/pids/userstream.pid ] || ! ps $(cat ../tmp/pids/userstream.pid) ; then ./userstream >> ../log/userstream.log 2>> ../log/userstream.err.log ; fi'
 ```

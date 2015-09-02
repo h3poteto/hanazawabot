@@ -5,6 +5,8 @@ import(
 	"os"
 	"net/url"
 	"strings"
+	"io/ioutil"
+	"strconv"
 
 	"github.com/ChimeraCoder/anaconda"
 	"../kanachan"
@@ -17,6 +19,8 @@ import(
 )
 
 func main() {
+	preparePidFile()
+	defer removePidFile()
 	anaconda.SetConsumerKey(os.Getenv("TWITTER_CONSUMER_KEY"))
 	anaconda.SetConsumerSecret(os.Getenv("TWITTER_CONSUMER_SECRET"))
 	api := anaconda.NewTwitterApi(os.Getenv("TWITTER_OAUTH_TOKEN"), os.Getenv("TWITTER_OAUTH_SECRET"))
@@ -160,4 +164,15 @@ func isMyself(tweet anaconda.Tweet, user anaconda.User) bool {
 	} else {
 		return false
 	}
+}
+
+func preparePidFile() {
+	pid := os.Getpid()
+	pidStr := strconv.Itoa(pid)
+	pidByte := []byte(pidStr + "\n")
+	ioutil.WriteFile("../tmp/pids/userstream.pid", pidByte, os.ModePerm)
+}
+
+func removePidFile() {
+	os.Remove("../tmp/pids/userstream.pid")
 }
