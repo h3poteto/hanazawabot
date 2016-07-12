@@ -1,2 +1,3 @@
 _vendor/
 tmp/
+.docker-env

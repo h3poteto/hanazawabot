@@ -5,26 +5,25 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 	"os"
+	"time"
 
-	"code.google.com/p/google-api-go-client/googleapi/transport"
-	"code.google.com/p/google-api-go-client/youtube/v3"
+	"google.golang.org/api/googleapi/transport"
+	"google.golang.org/api/youtube/v3"
 
-	"../models/dbyoutube"
 	"../kanachan"
+	"../models/dbyoutube"
 )
 
 var (
-	maxResults = flag.Int64("max-results", 50, "Max Youtube results")
+	maxResults  = flag.Int64("max-results", 50, "Max Youtube results")
 	query_words = [...]string{"花澤香菜", "花澤病"}
 )
 
-
 type Youtube struct {
-	title string
+	title       string
 	description string
-	thumbnail string
+	thumbnail   string
 }
 
 func main() {
