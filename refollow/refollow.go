@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"net/url"
 	"log"
-
+	"net/url"
+	"os"
 
 	"github.com/ChimeraCoder/anaconda"
-
 )
 
 func main() {
@@ -33,7 +31,8 @@ func main() {
 		next_cursor = f.Next_cursor_str
 	}
 
-	friends, _ := api.GetFriendsIdsAll(empty_values)
+	chanFriends := api.GetFriendsIdsAll(empty_values)
+	friends := <-chanFriends
 	var diff []int64
 	for _, follower := range followers {
 		found := false
@@ -56,6 +55,5 @@ func main() {
 			fmt.Printf("follow new user: %d \n", user.Id)
 		}
 	}
-
 
 }
