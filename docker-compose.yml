@@ -1,0 +1,22 @@
+version: '2'
+services:
+  storage:
+    image: busybox
+    volumes:
+      - /var/lib/mysql
+  mysql:
+    image: mysql:5.6.29
+    volumes_from:
+      - storage
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+  hanazawabot:
+    build: .
+    env_file: .docker-env
+    volumes:
+      - .:/root/app
+    links:
+      - mysql:mysql
+    command: /bin/bash
