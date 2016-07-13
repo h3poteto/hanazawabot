@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 
@@ -17,24 +16,13 @@ func main() {
 	// 自分の情報取得なので空
 	empty_values := url.Values{}
 
-	values := url.Values{}
-	first_followers, err := api.GetFollowersIds(values)
-	if err != nil {
-		log.Fatalf("twitter api error: %v", err)
-	}
-	followers := first_followers.Ids
-	next_cursor := first_followers.Next_cursor_str
-	for next_cursor != "0" {
-		values.Set("cursor", next_cursor)
-		f, _ := api.GetFollowersIds(values)
-		followers = append(followers, f.Ids...)
-		next_cursor = f.Next_cursor_str
-	}
+	chanFollowers := api.GetFollowersIdsAll(empty_values)
+	followers := <-chanFollowers
 
 	chanFriends := api.GetFriendsIdsAll(empty_values)
 	friends := <-chanFriends
 	var diff []int64
-	for _, follower := range followers {
+	for _, follower := range followers.Ids {
 		found := false
 		for _, friend := range friends.Ids {
 			if friend == follower {
