@@ -1,21 +1,21 @@
 package main
 
-import(
+import (
 	"fmt"
-	"os"
-	"net/url"
-	"strings"
 	"io/ioutil"
+	"net/url"
+	"os"
 	"strconv"
+	"strings"
 
-	"github.com/ChimeraCoder/anaconda"
 	"../kanachan"
-	"../models/dbyoutube"
+	"../models/dbfav"
+	"../models/dbretweet"
 	"../models/dbserif"
 	"../models/dbtweet"
 	"../models/dbuser"
-	"../models/dbretweet"
-	"../models/dbfav"
+	"../models/dbyoutube"
+	"github.com/ChimeraCoder/anaconda"
 )
 
 func main() {
@@ -39,7 +39,6 @@ func main() {
 			}
 			ydb := dbyoutube.NewDBYoutubeMovie()
 			var youtubedb dbyoutube.YoutubeMovie = ydb
-
 
 			aKana := &kanachan.Kanachan{}
 			var kana kanachan.Kana = aKana
@@ -65,7 +64,7 @@ func main() {
 				if movie == nil {
 					continue
 				}
-				rdb := &dbretweet.DBRetweet{}
+				rdb := dbretweet.NewDBRetweet()
 				var retweetdb dbretweet.Retweet = rdb
 
 				udb := dbuser.NewDBUser()
@@ -97,7 +96,7 @@ func main() {
 				}
 
 				_, error := api.PostTweet(
-					kana.BuildTweet("@" + tweet.User.ScreenName + " ",
+					kana.BuildTweet("@"+tweet.User.ScreenName+" ",
 						tweet_serif,
 						movie.Title,
 						movie.ConvertYoutubeID()),
@@ -105,7 +104,7 @@ func main() {
 				if error != nil {
 					fmt.Printf("twitter api error: %v\n", error)
 				} else {
-					fmt.Printf("reply to @%v: %v\n", tweet.User.ScreenName, "@" + tweet.User.ScreenName)
+					fmt.Printf("reply to @%v: %v\n", tweet.User.ScreenName, "@"+tweet.User.ScreenName)
 				}
 
 			} else {
@@ -144,14 +143,14 @@ func isReply(tweet anaconda.Tweet, user anaconda.User) bool {
 	if tweet.InReplyToUserID == user.Id {
 		return true
 	}
-	if strings.Contains(tweet.Text, "@" + user.ScreenName) {
+	if strings.Contains(tweet.Text, "@"+user.ScreenName) {
 		return true
 	}
 	return false
 }
 
 func isRetweet(tweet anaconda.Tweet, user anaconda.User) bool {
-	if strings.Index(tweet.Text, "RT") == 0 && tweet.User.Id != user.Id && strings.Contains(tweet.Text, "@" + user.ScreenName) {
+	if strings.Index(tweet.Text, "RT") == 0 && tweet.User.Id != user.Id && strings.Contains(tweet.Text, "@"+user.ScreenName) {
 		return true
 	} else {
 		return false
