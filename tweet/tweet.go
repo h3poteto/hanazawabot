@@ -1,21 +1,20 @@
 package main
 
 import (
-	"os"
 	"log"
+	"os"
 
 	"github.com/ChimeraCoder/anaconda"
 
-	"../models/dbyoutube"
-	"../models/dbserif"
 	"../kanachan"
+	"../models/dbserif"
+	"../models/dbyoutube"
 )
 
 func main() {
 	anaconda.SetConsumerKey(os.Getenv("TWITTER_CONSUMER_KEY"))
 	anaconda.SetConsumerSecret(os.Getenv("TWITTER_CONSUMER_SECRET"))
 	api := anaconda.NewTwitterApi(os.Getenv("TWITTER_OAUTH_TOKEN"), os.Getenv("TWITTER_OAUTH_SECRET"))
-
 
 	ydb := dbyoutube.NewDBYoutubeMovie()
 	var youtube_movie dbyoutube.YoutubeMovie = ydb
@@ -28,7 +27,7 @@ func main() {
 	sdb := dbserif.NewDBSerif()
 	var serif dbserif.Serif = sdb
 	tweet_serif, err := serif.SelectRandom()
-	if err != "" {
+	if err != nil {
 		log.Fatalf("DBSerif random select error: %v", err)
 	}
 
