@@ -1,8 +1,6 @@
 package main
 
 import (
-	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -16,7 +14,10 @@ import (
 	"../models/dbtweet"
 	"../models/dbuser"
 	"../models/dbyoutube"
+	"../modules/logging"
+
 	"github.com/ChimeraCoder/anaconda"
+	"github.com/pkg/errors"
 )
 
 func main() {
@@ -43,21 +44,27 @@ func main() {
 			var kana kanachan.Kana = aKana
 			if kana.IncludeCheck(tweet.Text) {
 				// contain
-				if saveKanaTweet(tweet) != nil {
-					// TODO: error log
+				err := saveKanaTweet(tweet)
+				if err != nil {
+					logging.SharedInstance().MethodInfo("userstream").Error(err)
+					continue
 				}
 			}
 
 			if isRetweet(tweet, self) {
 				// retweet
-				if saveRetweet(tweet) != nil {
-					// TODO: error log
+				err := saveRetweet(tweet)
+				if err != nil {
+					logging.SharedInstance().MethodInfo("userstream").Error(err)
+					continue
 				}
 
 			} else if isReply(tweet, self) {
 				// reply
-				if replyKanaMovie(tweet, api, kana) != nil {
-					// TODO: error log
+				err := replyKanaMovie(tweet, api, kana)
+				if err != nil {
+					logging.SharedInstance().MethodInfo("userstream").Error(err)
+					continue
 				}
 			} else {
 				continue
@@ -67,8 +74,10 @@ func main() {
 			if event_tweet.Event.Event == "favorite" {
 				// fav
 				tweet := *event_tweet.TargetObject
-				if saveFav(tweet) != nil {
-					// TODO: error log
+				err := saveFav(tweet)
+				if err != nil {
+					logging.SharedInstance().MethodInfo("userstream").Error(err)
+					continue
 				}
 			}
 		}
@@ -125,7 +134,7 @@ func saveKanaTweet(tweet anaconda.Tweet) error {
 		return errors.New("cannot select or add user")
 	}
 	tweetdb.Add(user.Id, tweet.Text, tweet.Id)
-	fmt.Printf("Add Tweet Log: %v \n", tweet.Text)
+	logging.SharedInstance().MethodInfo("userstream").Infof("Add tweet log: %v", tweet.Text)
 	return nil
 }
 
@@ -148,7 +157,7 @@ func saveRetweet(tweet anaconda.Tweet) error {
 		return errors.New("cannot select or add user")
 	}
 	retweetdb.Add(user.Id, movie.Id)
-	fmt.Printf("Add Rewteet Log: %v \n", movie.Id)
+	logging.SharedInstance().MethodInfo("userstream").Infof("Add retweet log: %v", movie.Id)
 	return nil
 }
 
@@ -166,7 +175,6 @@ func replyKanaMovie(tweet anaconda.Tweet, api *anaconda.TwitterApi, kana kanacha
 	var serif dbserif.Serif = sdb
 	tweet_serif, err := serif.SelectRandom()
 	if err != nil {
-		fmt.Printf("DBSerif random select error: %v\n", err)
 		return err
 	}
 
@@ -177,10 +185,9 @@ func replyKanaMovie(tweet anaconda.Tweet, api *anaconda.TwitterApi, kana kanacha
 			movie.ConvertYoutubeID()),
 		tweet_value)
 	if err != nil {
-		fmt.Printf("twitter api error: %v\n", err)
-		return err
+		return errors.Wrap(err, "twitter api error")
 	}
-	fmt.Printf("reply to @%v: %v\n", tweet.User.ScreenName, "@"+tweet.User.ScreenName)
+	logging.SharedInstance().MethodInfo("userstream").Infof("reply to @%v", tweet.User.ScreenName)
 	return nil
 }
 
@@ -204,6 +211,6 @@ func saveFav(tweet anaconda.Tweet) error {
 		return errors.New("cannot select or add user")
 	}
 	_ = favdb.Add(user.Id, movie.Id)
-	fmt.Printf("Add Fav Log: %v \n", movie.Id)
+	logging.SharedInstance().MethodInfo("userstream").Infof("Add fav log: %v", movie.Id)
 	return nil
 }

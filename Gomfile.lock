@@ -1,4 +1,0 @@
-gom 'github.com/go-sql-driver/mysql', :commit => '3654d25ec346ee8ce71a68431025458d52a38ac0'
-gom 'google.golang.org/api/googleapi/transport', :commit => 'c13a21ee847eca050f08db8373d8737494a1170e'
-gom 'google.golang.org/api/youtube/v3', :commit => 'c13a21ee847eca050f08db8373d8737494a1170e'
-gom 'github.com/ChimeraCoder/anaconda', :commit => '00ecb7b4510497dc28cd46a598007ab8fe01f889'
