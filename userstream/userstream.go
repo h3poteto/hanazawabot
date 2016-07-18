@@ -156,7 +156,10 @@ func saveRetweet(tweet anaconda.Tweet) error {
 	if user.Id == 0 {
 		return errors.New("cannot select or add user")
 	}
-	retweetdb.Add(user.Id, movie.Id)
+	err := retweetdb.Add(user.Id, movie.Id)
+	if err != nil {
+		return err
+	}
 	logging.SharedInstance().MethodInfo("userstream").Infof("Add retweet log: %v", movie.Id)
 	return nil
 }

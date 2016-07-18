@@ -1,14 +1,16 @@
 package dbretweet
 
 import (
-	"fmt"
 	"time"
+
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/pkg/errors"
+
 	"../basedb"
 )
 
 type Retweet interface {
-	Add(int, int) bool
+	Add(int, int) error
 }
 
 type DBRetweet struct {
@@ -27,14 +29,13 @@ func NewDBRetweet() *DBRetweet {
 	return dbretweet
 }
 
-func (u *DBRetweet) Add(user_id int, youtube_movie_id int) bool {
+func (u *DBRetweet) Add(user_id int, youtube_movie_id int) error {
 	db := u.dbobject.Init()
 	defer db.Close()
 
 	_, err := db.Exec("insert into youtube_movie_retweets (user_id, youtube_movie_id, created_at) values (?, ?, ?)", user_id, youtube_movie_id, time.Now())
 	if err != nil {
-		fmt.Printf("mysql connect error: %v \n", err)
-		return false
+		return errors.Wrap(err, "mysql insert error")
 	}
-	return true
+	return nil
 }
