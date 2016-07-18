@@ -128,12 +128,15 @@ func saveKanaTweet(tweet anaconda.Tweet) error {
 	udb := dbuser.NewDBUser()
 	var userdb dbuser.User = udb
 
-	user := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
+	user, err := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
+	if err != nil {
+		return err
+	}
 
 	if user.Id == 0 {
 		return errors.New("cannot select or add user")
 	}
-	err := tweetdb.Add(user.Id, tweet.Text, tweet.Id)
+	err = tweetdb.Add(user.Id, tweet.Text, tweet.Id)
 	if err != nil {
 		return err
 	}
@@ -154,12 +157,15 @@ func saveRetweet(tweet anaconda.Tweet) error {
 	udb := dbuser.NewDBUser()
 	var userdb dbuser.User = udb
 
-	user := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
+	user, err := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
+	if err != nil {
+		return err
+	}
 
 	if user.Id == 0 {
 		return errors.New("cannot select or add user")
 	}
-	err := retweetdb.Add(user.Id, movie.Id)
+	err = retweetdb.Add(user.Id, movie.Id)
 	if err != nil {
 		return err
 	}
@@ -211,12 +217,15 @@ func saveFav(tweet anaconda.Tweet) error {
 	udb := dbuser.NewDBUser()
 	var userdb dbuser.User = udb
 
-	user := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
+	user, err := userdb.SelectOrAdd(tweet.User.Id, tweet.User.ScreenName)
+	if err != nil {
+		return err
+	}
 
 	if user.Id == 0 {
 		return errors.New("cannot select or add user")
 	}
-	err := favdb.Add(user.Id, movie.Id)
+	err = favdb.Add(user.Id, movie.Id)
 	if err != nil {
 		return err
 	}
