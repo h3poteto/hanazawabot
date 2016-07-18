@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/ChimeraCoder/anaconda"
@@ -9,6 +8,7 @@ import (
 	"../kanachan"
 	"../models/dbserif"
 	"../models/dbyoutube"
+	"../modules/logging"
 )
 
 // TODO: select randomではなく今日の分だけ取得できるようにする
@@ -22,25 +22,25 @@ func main() {
 
 	movie := youtube_movie.SelectToday()
 	if movie == nil {
-		log.Fatalf("DBYoutube today select error")
+		logging.SharedInstance().MethodInfo("daily_tweet").Fatal("DBYoutube today select error")
 	}
 
 	sdb := dbserif.NewDBSerif()
 	var serif dbserif.Serif = sdb
 	tweet_serif, err := serif.SelectRandom()
 	if err != nil {
-		log.Fatalf("DBSerif random select error: %v", err)
+		logging.SharedInstance().MethodInfo("daily_tweet").Fatalf("DBSerif random select error: %v", err)
 	}
 
 	aKana := &kanachan.Kanachan{}
 	var kana kanachan.Kana = aKana
-	_, error := api.PostTweet(
+	_, err = api.PostTweet(
 		kana.BuildTweet("",
 			tweet_serif,
 			movie.Title,
 			movie.ConvertYoutubeID()),
 		nil)
-	if error != nil {
-		log.Fatalf("twitter api error: %v", error)
+	if err != nil {
+		logging.SharedInstance().MethodInfo("daily_tweet").Fatalf("Twitter API error: %v", err)
 	}
 }
