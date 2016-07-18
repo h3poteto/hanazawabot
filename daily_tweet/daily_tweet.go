@@ -43,4 +43,5 @@ func main() {
 	if err != nil {
 		logging.SharedInstance().MethodInfo("daily_tweet").Fatalf("Twitter API error: %v", err)
 	}
+	logging.SharedInstance().MethodInfo("daily_tweet").Infof("daily tweet: %v", movie.Title)
 }
