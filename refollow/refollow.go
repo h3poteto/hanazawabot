@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"net/url"
 	"os"
 
 	"github.com/ChimeraCoder/anaconda"
+
+	"../modules/logging"
 )
 
 func main() {
@@ -38,10 +39,9 @@ func main() {
 	for _, follower := range diff {
 		user, err := api.FollowUserId(follower, empty_values)
 		if err != nil {
-			fmt.Printf("twitter follow error: %v", err)
-		} else {
-			fmt.Printf("follow new user: %d \n", user.Id)
+			logging.SharedInstance().MethodInfo("refollow").Errorf("twitter follow error: %v", err)
 		}
+		logging.SharedInstance().MethodInfo("refollow").Infof("follow new user: %d", user.Id)
 	}
 
 }
