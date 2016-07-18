@@ -210,7 +210,10 @@ func saveFav(tweet anaconda.Tweet) error {
 	if user.Id == 0 {
 		return errors.New("cannot select or add user")
 	}
-	_ = favdb.Add(user.Id, movie.Id)
+	err := favdb.Add(user.Id, movie.Id)
+	if err != nil {
+		return err
+	}
 	logging.SharedInstance().MethodInfo("userstream").Infof("Add fav log: %v", movie.Id)
 	return nil
 }
