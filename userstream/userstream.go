@@ -133,7 +133,10 @@ func saveKanaTweet(tweet anaconda.Tweet) error {
 	if user.Id == 0 {
 		return errors.New("cannot select or add user")
 	}
-	tweetdb.Add(user.Id, tweet.Text, tweet.Id)
+	err := tweetdb.Add(user.Id, tweet.Text, tweet.Id)
+	if err != nil {
+		return err
+	}
 	logging.SharedInstance().MethodInfo("userstream").Infof("Add tweet log: %v", tweet.Text)
 	return nil
 }

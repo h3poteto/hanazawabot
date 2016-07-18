@@ -32,26 +32,24 @@ func NewDBSerif() *DBSerif {
 
 func (u *DBSerif) Add(body string) error {
 	db := u.dbobject.Init()
+	defer db.Close()
 
 	_, err := db.Exec("insert into serifs (body, created_at) values (?, ?)", body, time.Now())
 	if err != nil {
 		return errors.Wrap(err, "mysql insert error")
 	}
 
-	defer db.Close()
-
 	return nil
 }
 
 func (u *DBSerif) SelectRandom() (tweet string, err error) {
 	db := u.dbobject.Init()
+	defer db.Close()
 
 	rows, err := db.Query("select * from serifs order by rand() limit 1;")
 	if err != nil {
 		return "", errors.Wrap(err, "mysql select error")
 	}
-
-	defer db.Close()
 
 	id, body, created_at, updated_at := 0, "", "", ""
 	for rows.Next() {
