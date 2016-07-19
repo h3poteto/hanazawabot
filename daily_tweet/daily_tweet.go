@@ -20,9 +20,9 @@ func main() {
 	ydb := dbyoutube.NewDBYoutubeMovie()
 	var youtube_movie dbyoutube.YoutubeMovie = ydb
 
-	movie := youtube_movie.SelectToday()
-	if movie == nil {
-		logging.SharedInstance().MethodInfo("daily_tweet").Fatal("DBYoutube today select error")
+	movie, err := youtube_movie.SelectToday()
+	if err != nil {
+		logging.SharedInstance().MethodInfo("daily_tweet").Fatalf("DBYoutube today select error: %v", err)
 	}
 
 	sdb := dbserif.NewDBSerif()
@@ -34,11 +34,15 @@ func main() {
 
 	aKana := &kanachan.Kanachan{}
 	var kana kanachan.Kana = aKana
+	movieID, err := movie.ConvertYoutubeID()
+	if err != nil {
+		logging.SharedInstance().MethodInfo("daily_tweet").Fatal(err)
+	}
 	_, err = api.PostTweet(
 		kana.BuildTweet("",
 			tweet_serif,
 			movie.Title,
-			movie.ConvertYoutubeID()),
+			movieID),
 		nil)
 	if err != nil {
 		logging.SharedInstance().MethodInfo("daily_tweet").Fatalf("Twitter API error: %v", err)

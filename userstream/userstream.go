@@ -176,9 +176,9 @@ func saveRetweet(tweet anaconda.Tweet) error {
 func replyKanaMovie(tweet anaconda.Tweet, api *anaconda.TwitterApi, kana kanachan.Kana) error {
 	ydb := dbyoutube.NewDBYoutubeMovie()
 	var youtubedb dbyoutube.YoutubeMovie = ydb
-	movie := youtubedb.SelectRandom()
-	if movie == nil {
-		return errors.New("DBYoutube random select error")
+	movie, err := youtubedb.SelectRandom()
+	if err != nil {
+		return err
 	}
 	tweet_value := url.Values{}
 	tweet_value.Set("in_reply_to_status_id", tweet.IdStr)
@@ -190,11 +190,15 @@ func replyKanaMovie(tweet anaconda.Tweet, api *anaconda.TwitterApi, kana kanacha
 		return err
 	}
 
+	youtubeID, err := movie.ConvertYoutubeID()
+	if err != nil {
+		return err
+	}
 	_, err = api.PostTweet(
 		kana.BuildTweet("@"+tweet.User.ScreenName+" ",
 			tweet_serif,
 			movie.Title,
-			movie.ConvertYoutubeID()),
+			youtubeID),
 		tweet_value)
 	if err != nil {
 		return errors.Wrap(err, "twitter api error")

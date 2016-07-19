@@ -75,7 +75,7 @@ func main() {
 			var db dbyoutube.YoutubeMovie = myDb
 
 			for id, youtube := range videos {
-				db.Add(youtube.title, id, youtube.description)
+				_ := db.Add(youtube.title, id, youtube.description)
 				fmt.Printf("add youtube_movies to: %v \n", youtube.title)
 			}
 		}

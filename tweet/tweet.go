@@ -19,9 +19,9 @@ func main() {
 	ydb := dbyoutube.NewDBYoutubeMovie()
 	var youtube_movie dbyoutube.YoutubeMovie = ydb
 
-	movie := youtube_movie.SelectRandom()
-	if movie == nil {
-		logging.SharedInstance().MethodInfo("tweet").Fatal("DBYoutube random select error")
+	movie, err := youtube_movie.SelectRandom()
+	if err != nil {
+		logging.SharedInstance().MethodInfo("tweet").Fatalf("DBYoutube random select error: %v", err)
 	}
 
 	sdb := dbserif.NewDBSerif()
@@ -33,11 +33,15 @@ func main() {
 
 	aKana := &kanachan.Kanachan{}
 	var kana kanachan.Kana = aKana
+	movieID, err := movie.ConvertYoutubeID()
+	if err != nil {
+		logging.SharedInstance().MethodInfo("tweet").Fatal(err)
+	}
 	_, err = api.PostTweet(
 		kana.BuildTweet("",
 			tweet_serif,
 			movie.Title,
-			movie.ConvertYoutubeID()),
+			movieID),
 		nil)
 	if err != nil {
 		logging.SharedInstance().MethodInfo("tweet").Fatalf("Twitter API error: %v", err)

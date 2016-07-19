@@ -70,7 +70,11 @@ func main() {
 		var db dbyoutube.YoutubeMovie = myDb
 
 		for id, youtube := range videos {
-			db.Add(youtube.title, id, youtube.description)
+			err := db.Add(youtube.title, id, youtube.description)
+			if err != nil {
+				logging.SharedInstance().MethodInfo("daily_crawl_youtube").Info(err)
+				continue
+			}
 			logging.SharedInstance().MethodInfo("daily_crawl_youtube").Infof("Add youtube_movies to: %v", youtube.title)
 		}
 	}
