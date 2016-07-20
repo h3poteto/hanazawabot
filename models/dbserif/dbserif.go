@@ -1,14 +1,16 @@
 package dbserif
 
 import (
-	"../basedb"
-	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/pkg/errors"
+
+	"../basedb"
 )
 
 type Serif interface {
-	Add(string) bool
+	Add(string) error
 	SelectRandom() (tweet string, err error)
 }
 
@@ -28,36 +30,32 @@ func NewDBSerif() *DBSerif {
 	return dbserif
 }
 
-func (u *DBSerif) Add(body string) bool {
+func (u *DBSerif) Add(body string) error {
 	db := u.dbobject.Init()
+	defer db.Close()
 
 	_, err := db.Exec("insert into serifs (body, created_at) values (?, ?)", body, time.Now())
 	if err != nil {
-		fmt.Printf("mysql connect error: %v \n", err)
-		return false
+		return errors.Wrap(err, "mysql insert error")
 	}
 
-	defer db.Close()
-
-	return true
+	return nil
 }
 
 func (u *DBSerif) SelectRandom() (tweet string, err error) {
 	db := u.dbobject.Init()
+	defer db.Close()
 
 	rows, err := db.Query("select * from serifs order by rand() limit 1;")
 	if err != nil {
-		fmt.Printf("mysql connect error: %v \n", err)
-		return "", err
+		return "", errors.Wrap(err, "mysql select error")
 	}
-
-	defer db.Close()
 
 	id, body, created_at, updated_at := 0, "", "", ""
 	for rows.Next() {
 		err = rows.Scan(&id, &body, &created_at, &updated_at)
 		if err != nil {
-			return "", err
+			return "", errors.Wrap(err, "mysql scan error")
 		}
 	}
 

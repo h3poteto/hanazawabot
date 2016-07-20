@@ -2,8 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -13,6 +11,7 @@ import (
 
 	"../kanachan"
 	"../models/dbyoutube"
+	"../modules/logging"
 )
 
 var (
@@ -36,7 +35,7 @@ func main() {
 
 	service, err := youtube.New(client)
 	if err != nil {
-		log.Fatalf("Error creating Youtube client: %v", err)
+		logging.SharedInstance().MethodInfo("daily_crawl_youtube").Fatalf("Error creating youtube client: %v", err)
 	}
 
 	now := time.Now()
@@ -54,7 +53,7 @@ func main() {
 		response, err := call.Do()
 
 		if err != nil {
-			log.Fatalf("error making search API call: %v", err)
+			logging.SharedInstance().MethodInfo("daily_crawl_youtube").Fatalf("Error making search API call: %v", err)
 		}
 
 		videos := make(map[string]Youtube)
@@ -71,8 +70,12 @@ func main() {
 		var db dbyoutube.YoutubeMovie = myDb
 
 		for id, youtube := range videos {
-			db.Add(youtube.title, id, youtube.description)
-			fmt.Printf("add youtube_movies to: %v \n", youtube.title)
+			err := db.Add(youtube.title, id, youtube.description)
+			if err != nil {
+				logging.SharedInstance().MethodInfo("daily_crawl_youtube").Info(err)
+				continue
+			}
+			logging.SharedInstance().MethodInfo("daily_crawl_youtube").Infof("Add youtube_movies to: %v", youtube.title)
 		}
 	}
 }

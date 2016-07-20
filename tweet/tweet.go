@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/ChimeraCoder/anaconda"
@@ -9,6 +8,7 @@ import (
 	"../kanachan"
 	"../models/dbserif"
 	"../models/dbyoutube"
+	"../modules/logging"
 )
 
 func main() {
@@ -19,27 +19,32 @@ func main() {
 	ydb := dbyoutube.NewDBYoutubeMovie()
 	var youtube_movie dbyoutube.YoutubeMovie = ydb
 
-	movie := youtube_movie.SelectRandom()
-	if movie == nil {
-		log.Fatalf("DBYoutube random select error")
+	movie, err := youtube_movie.SelectRandom()
+	if err != nil {
+		logging.SharedInstance().MethodInfo("tweet").Fatalf("DBYoutube random select error: %v", err)
 	}
 
 	sdb := dbserif.NewDBSerif()
 	var serif dbserif.Serif = sdb
 	tweet_serif, err := serif.SelectRandom()
 	if err != nil {
-		log.Fatalf("DBSerif random select error: %v", err)
+		logging.SharedInstance().MethodInfo("tweet").Fatalf("DBSerif random select error: %v", err)
 	}
 
 	aKana := &kanachan.Kanachan{}
 	var kana kanachan.Kana = aKana
-	_, error := api.PostTweet(
+	movieID, err := movie.ConvertYoutubeID()
+	if err != nil {
+		logging.SharedInstance().MethodInfo("tweet").Fatal(err)
+	}
+	_, err = api.PostTweet(
 		kana.BuildTweet("",
 			tweet_serif,
 			movie.Title,
-			movie.ConvertYoutubeID()),
+			movieID),
 		nil)
-	if error != nil {
-		log.Fatalf("twitter api error: %v", error)
+	if err != nil {
+		logging.SharedInstance().MethodInfo("tweet").Fatalf("Twitter API error: %v", err)
 	}
+	logging.SharedInstance().MethodInfo("tweet").Infof("tweet success: %v", movie.Title)
 }
