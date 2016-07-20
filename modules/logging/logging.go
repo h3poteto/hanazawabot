@@ -3,6 +3,7 @@ package logging
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -62,5 +63,16 @@ func (self *Logging) MethodInfoWithStacktrace(pkg string, err error) *logrus.Ent
 		"time":       time.Now(),
 		"pkg":        pkg,
 		"stacktrace": fmt.Sprintf("%+v", st[0:traceLength]),
+	})
+}
+
+// PanicRecover send error and stacktrace
+func (u *Logging) PanicRecover() *logrus.Entry {
+	buf := make([]byte, 1<<16)
+	runtime.Stack(buf, false)
+	return u.Log.WithFields(logrus.Fields{
+		"time":       time.Now(),
+		"pkg":        "main",
+		"stacktrace": string(buf),
 	})
 }

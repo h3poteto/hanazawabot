@@ -23,6 +23,19 @@ import (
 func main() {
 	preparePidFile()
 	defer removePidFile()
+
+	for _ = 0; ; {
+		userstream()
+	}
+}
+
+func userstream() {
+	defer func() {
+		if err := recover(); err != nil {
+			logging.SharedInstance().PanicRecover().Error(err)
+		}
+	}()
+
 	anaconda.SetConsumerKey(os.Getenv("TWITTER_CONSUMER_KEY"))
 	anaconda.SetConsumerSecret(os.Getenv("TWITTER_CONSUMER_SECRET"))
 	api := anaconda.NewTwitterApi(os.Getenv("TWITTER_OAUTH_TOKEN"), os.Getenv("TWITTER_OAUTH_SECRET"))
