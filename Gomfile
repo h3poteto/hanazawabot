@@ -3,4 +3,5 @@ gom "google.golang.org/api/googleapi/transport"
 gom "google.golang.org/api/youtube/v3"
 gom "github.com/ChimeraCoder/anaconda"
 gom "github.com/Sirupsen/logrus"
-gom "github.com/pkg/errors"
+gom "github.com/pkg/errors", :tag => 'v0.6.0'
+gom "github.com/johntdyer/slackrus"

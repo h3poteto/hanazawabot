@@ -46,7 +46,7 @@ func main() {
 				// contain
 				err := saveKanaTweet(tweet)
 				if err != nil {
-					logging.SharedInstance().MethodInfo("userstream").Error(err)
+					logging.SharedInstance().MethodInfoWithStacktrace("userstream", err).Error(err)
 					continue
 				}
 			}
@@ -55,7 +55,7 @@ func main() {
 				// retweet
 				err := saveRetweet(tweet)
 				if err != nil {
-					logging.SharedInstance().MethodInfo("userstream").Error(err)
+					logging.SharedInstance().MethodInfoWithStacktrace("userstream", err).Error(err)
 					continue
 				}
 
@@ -63,7 +63,7 @@ func main() {
 				// reply
 				err := replyKanaMovie(tweet, api, kana)
 				if err != nil {
-					logging.SharedInstance().MethodInfo("userstream").Error(err)
+					logging.SharedInstance().MethodInfoWithStacktrace("userstream", err).Error(err)
 					continue
 				}
 			} else {
@@ -76,7 +76,7 @@ func main() {
 				tweet := *event_tweet.TargetObject
 				err := saveFav(tweet)
 				if err != nil {
-					logging.SharedInstance().MethodInfo("userstream").Error(err)
+					logging.SharedInstance().MethodInfoWithStacktrace("userstream", err).Error(err)
 					continue
 				}
 			}
