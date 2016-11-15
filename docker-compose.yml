@@ -5,18 +5,18 @@ services:
     volumes:
       - /var/lib/mysql
   mysql:
-    image: mysql:5.6.29
+    image: mysql:5.7
     volumes_from:
       - storage
     ports:
       - "3307:3306"
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-  hanazawabot:
-    build: .
+  go:
+    build: ./dockerfiles/development
     env_file: .docker-env
     volumes:
       - .:/root/app
     links:
       - mysql:mysql
-    command: /bin/bash
+    command: /bin/sh
