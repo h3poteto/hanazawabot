@@ -14,6 +14,7 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
+// DailyCrawl is struct for dailyCrowdYoutube
 type DailyCrawl struct {
 	maxResults int64
 	queryWords []string

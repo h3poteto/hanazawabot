@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// RootCmd has commands for hanazawabot
 var RootCmd = &cobra.Command{
 	Use:           "hanazawabot",
 	Short:         "Twitter bot for hanazawabot",

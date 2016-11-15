@@ -19,6 +19,7 @@ type Youtube struct {
 	thumbnail   string
 }
 
+// AllCrawl is struct for allCrawlYoutube
 type AllCrawl struct {
 	maxResults int64
 	queryWords []string

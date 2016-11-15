@@ -13,7 +13,7 @@ type Database struct {
 
 var sharedInstance = New()
 
-// TODO: ここはyamlから設定読みたい
+// New prepare database instance
 func New() *Database {
 	username := os.Getenv("HANAZAWA_DB_USER")
 	password := os.Getenv("HANAZAWA_DB_PASSWORD")
@@ -31,10 +31,12 @@ func New() *Database {
 	}
 }
 
+// SharedInstance for database instance
 func SharedInstance() *Database {
 	return sharedInstance
 }
 
+// Close connection to database
 func (d *Database) Close() error {
 	return d.Connection.Close()
 }

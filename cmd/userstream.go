@@ -21,6 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Userstream is struct for userstream
 type Userstream struct {
 	pid string
 }
