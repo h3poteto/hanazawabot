@@ -5,3 +5,4 @@ gom "github.com/ChimeraCoder/anaconda"
 gom "github.com/Sirupsen/logrus"
 gom "github.com/pkg/errors", :tag => 'v0.6.0'
 gom "github.com/johntdyer/slackrus"
+gom "github.com/spf13/cobra/cobra"

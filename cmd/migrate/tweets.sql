@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS tweets (
+id int(11) NOT NULL AUTO_INCREMENT,
+user_id int(11),
+tweet varchar(255) DEFAULT NULL,
+tweet_id bigint(20) unsigned NOT NULL,
+created_at datetime DEFAULT NULL,
+updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+PRIMARY KEY (id)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -1,12 +1,12 @@
 package dbserif
 
 import (
+	"database/sql"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/pkg/errors"
-
 	"../basedb"
+
+	"github.com/pkg/errors"
 )
 
 type Serif interface {
@@ -15,13 +15,11 @@ type Serif interface {
 }
 
 type DBSerif struct {
-	dbobject basedb.DB
+	database *sql.DB
 }
 
 func (self *DBSerif) Initialize() {
-	myDatabase := &basedb.Database{}
-	var myDb basedb.DB = myDatabase
-	self.dbobject = myDb
+	self.database = basedb.SharedInstance().Connection
 }
 
 func NewDBSerif() *DBSerif {
@@ -31,10 +29,7 @@ func NewDBSerif() *DBSerif {
 }
 
 func (u *DBSerif) Add(body string) error {
-	db := u.dbobject.Init()
-	defer db.Close()
-
-	_, err := db.Exec("insert into serifs (body, created_at) values (?, ?)", body, time.Now())
+	_, err := u.database.Exec("insert into serifs (body, created_at) values (?, ?)", body, time.Now())
 	if err != nil {
 		return errors.Wrap(err, "mysql insert error")
 	}
@@ -43,10 +38,7 @@ func (u *DBSerif) Add(body string) error {
 }
 
 func (u *DBSerif) SelectRandom() (tweet string, err error) {
-	db := u.dbobject.Init()
-	defer db.Close()
-
-	rows, err := db.Query("select * from serifs order by rand() limit 1;")
+	rows, err := u.database.Query("select * from serifs order by rand() limit 1;")
 	if err != nil {
 		return "", errors.Wrap(err, "mysql select error")
 	}

@@ -1,14 +1,14 @@
 package dbyoutube
 
 import (
+	"database/sql"
 	"strings"
 	"time"
 
-	"github.com/ChimeraCoder/anaconda"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/pkg/errors"
-
 	"../basedb"
+
+	"github.com/ChimeraCoder/anaconda"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -32,13 +32,11 @@ type DBYoutubeMovie struct {
 	Description string
 	Used        bool
 	Disabled    bool
-	dbobject    basedb.DB
+	database    *sql.DB
 }
 
 func (self *DBYoutubeMovie) Initialize() {
-	myDatabase := &basedb.Database{}
-	var myDb basedb.DB = myDatabase
-	self.dbobject = myDb
+	self.database = basedb.SharedInstance().Connection
 }
 
 func NewDBYoutubeMovie() *DBYoutubeMovie {
@@ -48,10 +46,7 @@ func NewDBYoutubeMovie() *DBYoutubeMovie {
 }
 
 func (u *DBYoutubeMovie) Add(title string, id string, description string) error {
-	db := u.dbobject.Init()
-	defer db.Close()
-
-	_, err := db.Exec("insert into youtube_movies (title, movie_id, description, disabled, created_at) values (?, ?, ?, ?, ?)", title, id, description, 0, time.Now())
+	_, err := u.database.Exec("insert into youtube_movies (title, movie_id, description, disabled, created_at) values (?, ?, ?, ?, ?)", title, id, description, 0, time.Now())
 	if err != nil {
 		return errors.Wrap(err, "mysql insert error")
 	}
@@ -60,10 +55,7 @@ func (u *DBYoutubeMovie) Add(title string, id string, description string) error 
 }
 
 func (u *DBYoutubeMovie) SelectRandom() (*DBYoutubeMovie, error) {
-	db := u.dbobject.Init()
-	defer db.Close()
-
-	rows, err := db.Query("select id, title, movie_id, description, used, disabled from youtube_movies order by rand() limit 1;")
+	rows, err := u.database.Query("select id, title, movie_id, description, used, disabled from youtube_movies order by rand() limit 1;")
 	if err != nil {
 		return nil, errors.Wrap(err, "mysql select error")
 	}
@@ -84,11 +76,8 @@ func (u *DBYoutubeMovie) SelectRandom() (*DBYoutubeMovie, error) {
 }
 
 func (u *DBYoutubeMovie) SelectToday() (*DBYoutubeMovie, error) {
-	db := u.dbobject.Init()
-	defer db.Close()
-
 	yesterday := time.Now().Add(-24 * time.Hour)
-	rows, err := db.Query("select id, title, movie_id, description, used, disabled from youtube_movies where created_at > ? and used = 0 limit 1;", yesterday)
+	rows, err := u.database.Query("select id, title, movie_id, description, used, disabled from youtube_movies where created_at > ? and used = 0 limit 1;", yesterday)
 	if err != nil {
 		return nil, errors.Wrap(err, "mysql select error")
 	}
@@ -124,9 +113,6 @@ func (u *DBYoutubeMovie) revertYoutubeID(url string) (string, error) {
 }
 
 func (u *DBYoutubeMovie) ScanYoutubeMovie(tweet anaconda.Tweet) *DBYoutubeMovie {
-	db := u.dbobject.Init()
-	defer db.Close()
-
 	for _, url := range tweet.Entities.Urls {
 		youtubeID, err := u.revertYoutubeID(url.Expanded_url)
 		if err != nil {
@@ -141,10 +127,7 @@ func (u *DBYoutubeMovie) ScanYoutubeMovie(tweet anaconda.Tweet) *DBYoutubeMovie 
 }
 
 func (u *DBYoutubeMovie) Select(keyword string) (*DBYoutubeMovie, error) {
-	db := u.dbobject.Init()
-	defer db.Close()
-
-	rows, err := db.Query("select id, movie_id, title, description, used, disabled from youtube_movies where movie_id like '%" + keyword + "%' or title like '%" + keyword + "%' or description like '%" + keyword + "%';")
+	rows, err := u.database.Query("select id, movie_id, title, description, used, disabled from youtube_movies where movie_id like '%" + keyword + "%' or title like '%" + keyword + "%' or description like '%" + keyword + "%';")
 	if err != nil {
 		return nil, errors.Wrap(err, "mysql select error")
 	}

@@ -2,25 +2,39 @@ package basedb
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
-type DB interface {
-	Init() *sql.DB
-}
-
 type Database struct {
+	Connection *sql.DB
 }
 
-func (u *Database) Init() *sql.DB {
+var sharedInstance = New()
+
+// TODO: ここはyamlから設定読みたい
+func New() *Database {
 	username := os.Getenv("HANAZAWA_DB_USER")
 	password := os.Getenv("HANAZAWA_DB_PASSWORD")
 	host := os.Getenv("HANAZAWA_DB_HOST")
 	port := os.Getenv("HANAZAWA_DB_PORT")
-	db, err := sql.Open("mysql", username+":"+password+"@tcp("+host+":"+port+")/hanazawa?charset=utf8")
+	pool := 5
+	db, err := sql.Open("mysql", username+":"+password+"@tcp("+host+":"+port+")/hanazawa?charset=utf8mb4")
 	if err != nil {
 		panic(err.Error())
 	}
-	return db
+	db.SetMaxIdleConns(pool)
+	db.SetMaxOpenConns(pool)
+	return &Database{
+		Connection: db,
+	}
+}
+
+func SharedInstance() *Database {
+	return sharedInstance
+}
+
+func (d *Database) Close() error {
+	return d.Connection.Close()
 }

@@ -3,10 +3,10 @@ package dbfav
 import (
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/pkg/errors"
-
 	"../basedb"
+
+	"database/sql"
+	"github.com/pkg/errors"
 )
 
 type Fav interface {
@@ -14,13 +14,11 @@ type Fav interface {
 }
 
 type DBFav struct {
-	dbobject basedb.DB
+	database *sql.DB
 }
 
 func (self *DBFav) Initialize() {
-	myDatabase := &basedb.Database{}
-	var myDb basedb.DB = myDatabase
-	self.dbobject = myDb
+	self.database = basedb.SharedInstance().Connection
 }
 
 func NewDBFav() *DBFav {
@@ -30,10 +28,7 @@ func NewDBFav() *DBFav {
 }
 
 func (u *DBFav) Add(user_id int, youtube_movie_id int) error {
-	db := u.dbobject.Init()
-	defer db.Close()
-
-	_, err := db.Exec("insert into youtube_movie_favs (user_id, youtube_movie_id, created_at) values (?, ?, ?)", user_id, youtube_movie_id, time.Now())
+	_, err := u.database.Exec("insert into youtube_movie_favs (user_id, youtube_movie_id, created_at) values (?, ?, ?)", user_id, youtube_movie_id, time.Now())
 	if err != nil {
 		return errors.Wrap(err, "mysql insert error")
 	}

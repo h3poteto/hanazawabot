@@ -4,10 +4,9 @@ import (
 	"database/sql"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/pkg/errors"
-
 	"../basedb"
+
+	"github.com/pkg/errors"
 )
 
 type User interface {
@@ -20,13 +19,11 @@ type DBUser struct {
 	Id         int
 	ScreenName string
 	TwitterID  int64
-	dbobject   basedb.DB
+	database   *sql.DB
 }
 
 func (self *DBUser) Initialize() {
-	myDatabase := &basedb.Database{}
-	var myDb basedb.DB = myDatabase
-	self.dbobject = myDb
+	self.database = basedb.SharedInstance().Connection
 }
 
 func NewDBUser() *DBUser {
@@ -36,10 +33,7 @@ func NewDBUser() *DBUser {
 }
 
 func (u *DBUser) Add(twitter_id int64, screen_name string) error {
-	db := u.dbobject.Init()
-	defer db.Close()
-
-	_, err := db.Exec("insert into users (twitter_id, screen_name, created_at) values (?, ?, ?)", twitter_id, screen_name, time.Now())
+	_, err := u.database.Exec("insert into users (twitter_id, screen_name, created_at) values (?, ?, ?)", twitter_id, screen_name, time.Now())
 	if err != nil {
 		return errors.Wrap(err, "mysql insert error")
 	}
@@ -48,18 +42,15 @@ func (u *DBUser) Add(twitter_id int64, screen_name string) error {
 }
 
 func (u *DBUser) Select(twitter_id int64, screen_name string) (*DBUser, error) {
-	db := u.dbobject.Init()
-	defer db.Close()
-
 	var rows *sql.Rows
 	var err error
 	if twitter_id > 0 {
-		rows, err = db.Query("select * from users where twitter_id = ?;", twitter_id)
+		rows, err = u.database.Query("select * from users where twitter_id = ?;", twitter_id)
 		if err != nil {
 			return nil, errors.Wrap(err, "mysql select error")
 		}
 	} else {
-		rows, err = db.Query("select * from users where screen_name = ?;", screen_name)
+		rows, err = u.database.Query("select * from users where screen_name = ?;", screen_name)
 		if err != nil {
 			return nil, errors.Wrap(err, "mysql select error")
 		}
