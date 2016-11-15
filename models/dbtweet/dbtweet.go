@@ -1,12 +1,12 @@
 package dbtweet
 
 import (
+	"database/sql"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/pkg/errors"
-
 	"../basedb"
+
+	"github.com/pkg/errors"
 )
 
 type Tweet interface {
@@ -14,13 +14,11 @@ type Tweet interface {
 }
 
 type DBTweet struct {
-	dbobject basedb.DB
+	database *sql.DB
 }
 
 func (self *DBTweet) Initialize() {
-	myDatabase := &basedb.Database{}
-	var myDb basedb.DB = myDatabase
-	self.dbobject = myDb
+	self.database = basedb.SharedInstance().Connection
 }
 
 func NewDBTweet() *DBTweet {
@@ -30,10 +28,7 @@ func NewDBTweet() *DBTweet {
 }
 
 func (u *DBTweet) Add(user_id int, tweet string, tweet_id int64) error {
-	db := u.dbobject.Init()
-	defer db.Close()
-
-	_, err := db.Exec("insert into tweets (user_id, tweet, tweet_id, created_at) values (?, ?, ?, ?)", user_id, tweet, tweet_id, time.Now())
+	_, err := u.database.Exec("insert into tweets (user_id, tweet, tweet_id, created_at) values (?, ?, ?, ?)", user_id, tweet, tweet_id, time.Now())
 	if err != nil {
 		return errors.Wrap(err, "mysql insert error")
 	}
