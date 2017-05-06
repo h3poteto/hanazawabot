@@ -3,7 +3,7 @@ package cmd
 import (
 	"log"
 
-	"../models/basedb"
+	"github.com/h3poteto/hanazawabot/models/basedb"
 
 	"github.com/spf13/cobra"
 )

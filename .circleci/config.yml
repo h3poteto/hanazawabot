@@ -1,0 +1,29 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: h3poteto/golang
+    working_directory: /go/src/github.com/h3poteto/hanazawabot
+    steps:
+      - checkout
+      - run:
+          name: Check golang version
+          command: go version
+      - restore_cache:
+          name: Restoring cache - vendor
+          keys:
+            - vendor-{{ checksum "Gopkg.toml" }}-{{ checksum "Gopkg.lock" }}
+      - run:
+          name: Generate assets file
+          command: go generate
+      - run:
+          name: Go packages install
+          command: dep ensure
+      - save_cache:
+          name: Saving cache - vendor
+          key: vendor-{{ checksum "Gopkg.toml" }}-{{ checksum "Gopkg.lock" }}
+          paths:
+            - "vendor"
+      - run:
+          name: Test
+          command: go test github.com/h3poteto/hanazawabot/kanachan

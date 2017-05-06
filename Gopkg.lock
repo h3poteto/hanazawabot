@@ -1,0 +1,103 @@
+memo = "a366c0075978cd7441a3aa14c6e7274010b1e55f7c088533647bd2af44201efb"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/ChimeraCoder/anaconda"
+  packages = ["."]
+  revision = "51200854e890da0fcefd1e26524b8ddd175ae850"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/ChimeraCoder/tokenbucket"
+  packages = ["."]
+  revision = "c5a927568de7aad8a58127d80bcd36ca4e71e454"
+
+[[projects]]
+  name = "github.com/Sirupsen/logrus"
+  packages = ["."]
+  revision = "ba1b36c82c5e05c4f912a88eab0dcd91a171688f"
+  version = "v0.11.5"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/azr/backoff"
+  packages = ["."]
+  revision = "53511d3c733003985b0b76f733df1f4d0095ee6a"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dustin/go-jsonpointer"
+  packages = ["."]
+  revision = "ba0abeacc3dcca5b9b20f31509c46794edbc9965"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dustin/gojson"
+  packages = ["."]
+  revision = "2e71ec9dd5adce3b168cd0dbde03b5cc04951c30"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/garyburd/go-oauth"
+  packages = ["oauth"]
+  revision = "4f191fd0442e75c0c73bd00e4f5f27d4c08312ee"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-sql-driver/mysql"
+  packages = ["."]
+  revision = "9dee4ca50b83acdf57a35fb9e6fb4be640afa2f3"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/inconshreveable/mousetrap"
+  packages = ["."]
+  revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/johntdyer/slack-go"
+  packages = ["."]
+  revision = "88736fd63eed11c942b478c3182bdd2f152971e5"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/johntdyer/slackrus"
+  packages = ["."]
+  revision = "9c71df2f4ceb8d8b0bbb12c65c56a8e03e34adba"
+
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/spf13/cobra"
+  packages = ["."]
+  revision = "db6b9a8b3f3f400c8ecb4a4d7d02245b8facad66"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/spf13/pflag"
+  packages = ["."]
+  revision = "80fe0fb4eba54167e2ccae1c6c950e72abf61b73"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["context","context/ctxhttp"]
+  revision = "feeb485667d1fdabe727840fe00adc22431bc86e"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  revision = "9ccfe848b9db8435a24c424abbc07a921adf1df5"
+
+[[projects]]
+  branch = "master"
+  name = "google.golang.org/api"
+  packages = ["gensupport","googleapi","googleapi/internal/uritemplates","googleapi/transport","youtube/v3"]
+  revision = "855cf877ae3202e012c45d0e3b4b152c075a2c27"

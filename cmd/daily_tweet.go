@@ -3,10 +3,10 @@ package cmd
 import (
 	"os"
 
-	"../kanachan"
-	"../models/dbserif"
-	"../models/dbyoutube"
-	"../modules/logging"
+	"github.com/h3poteto/hanazawabot/kanachan"
+	"github.com/h3poteto/hanazawabot/models/dbserif"
+	"github.com/h3poteto/hanazawabot/models/dbyoutube"
+	"github.com/h3poteto/hanazawabot/modules/logging"
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/spf13/cobra"

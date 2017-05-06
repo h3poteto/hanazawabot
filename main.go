@@ -1,13 +1,13 @@
 package main
 
 import (
-	"./cmd"
+	"github.com/h3poteto/hanazawabot/cmd"
 
 	"fmt"
 	"os"
 )
 
-//go:generate go-bindata -pkg cmd -o ./cmd/bindata.go cmd/migrate/
+//go:generate go-bindata -pkg=cmd -o=cmd/bindata.go cmd/migrate/
 
 func main() {
 	if err := cmd.RootCmd.Execute(); err != nil {

@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
-	"../kanachan"
-	"../models/dbyoutube"
-	"../modules/logging"
+	"github.com/h3poteto/hanazawabot/kanachan"
+	"github.com/h3poteto/hanazawabot/models/dbyoutube"
+	"github.com/h3poteto/hanazawabot/modules/logging"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/api/googleapi/transport"
