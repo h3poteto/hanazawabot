@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./cmd"
+	"github.com/h3poteto/hanazawabot/cmd"
 
 	"fmt"
 	"os"

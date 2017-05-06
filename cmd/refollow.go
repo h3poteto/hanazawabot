@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"os"
 
-	"../modules/logging"
+	"github.com/h3poteto/hanazawabot/modules/logging"
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/spf13/cobra"

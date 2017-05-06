@@ -4,7 +4,7 @@ import (
 	"log"
 	"regexp"
 
-	"../models/basedb"
+	"github.com/h3poteto/hanazawabot/models/basedb"
 
 	"github.com/spf13/cobra"
 )

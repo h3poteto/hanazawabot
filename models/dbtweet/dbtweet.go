@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"../basedb"
+	"github.com/h3poteto/hanazawabot/models/basedb"
 
 	"github.com/pkg/errors"
 )

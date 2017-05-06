@@ -13,10 +13,11 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
   go:
-    build: ./dockerfiles/development
+    image: h3poteto/golang
     env_file: .docker-env
     volumes:
-      - .:/root/app
+      - .:/go/src/github.com/h3poteto/hanazawabot
     links:
       - mysql:mysql
+    working_dir: /go/src/github.com/h3poteto/hanazawabot
     command: /bin/sh

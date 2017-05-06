@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"../basedb"
+	"github.com/h3poteto/hanazawabot/models/basedb"
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/pkg/errors"

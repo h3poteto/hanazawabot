@@ -3,7 +3,7 @@ package dbfav
 import (
 	"time"
 
-	"../basedb"
+	"github.com/h3poteto/hanazawabot/models/basedb"
 
 	"database/sql"
 	"github.com/pkg/errors"

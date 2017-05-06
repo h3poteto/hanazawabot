@@ -2,12 +2,11 @@ package kanachan
 
 import (
 	"testing"
-	"."
 )
 
 func TestExceptCheck(t *testing.T) {
-	aKana := &kanachan.Kanachan{}
-	var kana kanachan.Kana = aKana
+	aKana := &Kanachan{}
+	var kana Kana = aKana
 
 	if kana.ExceptCheck("花澤香菜 歌ってみた") != false {
 		t.Error("歌ってみたを含むワードが除外されない")
@@ -19,8 +18,8 @@ func TestExceptCheck(t *testing.T) {
 }
 
 func TestIncludeCheck(t *testing.T) {
-	aKana := &kanachan.Kanachan{}
-	var kana kanachan.Kana = aKana
+	aKana := &Kanachan{}
+	var kana Kana = aKana
 
 	if kana.IncludeCheck("撫子ちゃん，花澤さん") != true {
 		t.Error("花澤というワードに反応していない")
@@ -44,8 +43,8 @@ func TestIncludeCheck(t *testing.T) {
 }
 
 func TestBuildTweet(t *testing.T) {
-	aKana := &kanachan.Kanachan{}
-	var kana kanachan.Kana = aKana
+	aKana := &Kanachan{}
+	var kana Kana = aKana
 
 	if kana.BuildTweet("", "台詞", "タイトル", "https://youtube.com/") != "台詞 【タイトル】https://youtube.com/" {
 		t.Error("リプライなしのツイート文字列生成が上手く行ってない")
