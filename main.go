@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-//go:generate go-bindata -pkg=cmd -o=cmd/bindata.go cmd/migrate/
+//go:generate go-assets-builder -p=cmd --output=cmd/bindata.go cmd/migrate/
 
 func main() {
 	if err := cmd.RootCmd.Execute(); err != nil {
