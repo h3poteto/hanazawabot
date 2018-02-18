@@ -13,8 +13,17 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
   go:
-    image: h3poteto/golang
-    env_file: .docker-env
+    image: h3poteto/golang:1.9.4
+    environment:
+      HANAZAWA_DB_USER: root
+      HANAZAWA_DB_HOST: mysql
+      HANAZAWA_DB_PORT: 3306
+      DEVELOPER_KEY: $DEVELOPER_KEY
+      TWITTER_CONSUMER_KEY: $TWITTER_CONSUMER_KEY
+      TWITTER_CONSUMER_SECRET: $TWITTER_CONSUMER_SECRET
+      TWITTER_OAUTH_TOKEN: $TWITTER_OAUTH_TOKEN
+      TWITTER_OAUTH_SECRET: $TWITTER_OAUTH_SECRET
+      SLACK_URL: $SLACK_URL
     volumes:
       - .:/go/src/github.com/h3poteto/hanazawabot
     links:

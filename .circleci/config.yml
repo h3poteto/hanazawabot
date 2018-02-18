@@ -27,3 +27,32 @@ jobs:
       - run:
           name: Test
           command: go test github.com/h3poteto/hanazawabot/kanachan
+
+  deploy:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Check docker version
+          command: docker version
+      - run:
+          name: Docker build
+          command: docker build -t $AWS_ECR_REPOSITORY:latest .
+      - run:
+          name: Docker push
+          command: |
+            $(aws ecr get-login --no-include-email --region ap-northeast-1)
+            docker push $AWS_ECR_REPOSITORY:latest
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - build

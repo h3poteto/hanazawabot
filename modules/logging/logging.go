@@ -6,9 +6,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/johntdyer/slackrus"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 type Logging struct {
